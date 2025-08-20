@@ -61,7 +61,7 @@ export class ErmService {
     }
 
     public getLoansTopTwenty = () => {
-        const url = `/ms/api/v1/erm/loans-advances/top-twenty`;
+        const url = `/ms/api/v1/erm/reporting/loans-advances/top-twenty`;
 
         const params = this.getParams({month: '3', year: '2021'});
         return this.http
@@ -69,7 +69,7 @@ export class ErmService {
     }
 
     public getLoansTopSectors = () => {
-        const url = `/ms/api/v1/erm/loans-advances/top-sectors`;
+        const url = `/ms/api/v1/erm/reporting/loans-advances/top-sectors`;
 
         const params = this.getParams({month: '3', year: '2021'});
         return this.http
@@ -77,7 +77,7 @@ export class ErmService {
     }
 
     public getLoansNPL = () => {
-        const url = `/ms/api/v1/erm/loans-advances/npl`;
+        const url = `/ms/api/v1/erm/reporting/loans-advances/npl`;
 
         const params = this.getParams({month: '3', year: '2021'});
         return this.http
@@ -85,7 +85,7 @@ export class ErmService {
     }
 
     public getLoansUpDo = () => {
-        const url = `/ms/api/v1/erm/loans-advances/updo`;
+        const url = `/ms/api/v1/erm/reporting/loans-advances/updo`;
 
         const params = this.getParams({month: '3', year: '2021'});
         return this.http
@@ -93,7 +93,7 @@ export class ErmService {
     }
 
     public getLoansStage = () => {
-        const url = `/ms/api/v1/erm/loans-advances/stage`;
+        const url = `/ms/api/v1/erm/reporting/loans-advances/stage`;
 
         const params = this.getParams({month: '3', year: '2021'});
         return this.http
@@ -101,7 +101,7 @@ export class ErmService {
     }
 
     public getLoansCountry = () => {
-        const url = `/ms/api/v1/erm/loans-advances/country`;
+        const url = `/ms/api/v1/erm/reporting/loans-advances/country`;
 
         const params = this.getParams({month: '3', year: '2021'});
         return this.http
@@ -109,7 +109,7 @@ export class ErmService {
     }
 
     public getEclRatio = () => {
-        const url = `/ms/api/v1/erm/loans-advances/ecl-ratio`;
+        const url = `/ms/api/v1/erm/reporting/loans-advances/ecl-ratio`;
 
         const params = this.getParams({month: '3', year: '2021'});
         return this.http

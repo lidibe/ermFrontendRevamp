@@ -76,13 +76,14 @@ export class SummaryDataService {
   getSummaryDatasNew(query?: any): Observable<SummaryData[]> {
     const params = this.getParams(query);
     return this._httpClient
-      .get<any>('/ms/api/v1/erm/reporting', { params })
+      .get<any>('/ms/api/v1/erm/reporting/overall', { params })
       .pipe(
         tap((res) => {
           this._summaryDatas.next(res.data);
         })
       );
   }
+
   /**
    * Search summaryDatas with given query
    *

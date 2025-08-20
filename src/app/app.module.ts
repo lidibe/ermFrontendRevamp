@@ -1,6 +1,6 @@
 import { NgModule, APP_INITIALIZER, inject } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withInterceptors} from '@angular/common/http';
 import { RouterModule, PreloadAllModules } from '@angular/router';
 
 import { AppComponent } from 'app/app.component';   // now a classic (non-standalone) component
@@ -19,7 +19,6 @@ import { TranslocoHttpLoader } from 'app/core/transloco/transloco.http-loader';
 import { firstValueFrom } from 'rxjs';
 import { successInterceptor } from 'app/shared/interceptors/alert.interceptor';
 
-import { provideAuth } from 'app/core/auth/auth.provider';
 import { provideIcons } from 'app/core/icons/icons.provider';
 import { provideFuse } from '@fuse';
 import { mockApiServices } from 'app/mock-api';
@@ -33,6 +32,9 @@ import { KriDataAddDialogComponent } from './shared/dialogs/kri-data-add/kri-dat
 import { KriThresholdDialogComponent } from './shared/dialogs/kri-threshold/kri-threshold.dialog.component';
 import { RiskAreaDataAddDialogComponent } from './shared/dialogs/risk-area-data-add/risk-area-data-add.dialog.component';
 import { SummaryDataAddDialogComponent } from './shared/dialogs/summary-data-add/summary-data-add.dialog.component';
+
+import { AuthModule, AuthHttpInterceptor } from '@auth0/auth0-angular';
+import { environment } from 'environments/environment';
 
 @NgModule({
   declarations: [
@@ -55,7 +57,21 @@ import { SummaryDataAddDialogComponent } from './shared/dialogs/summary-data-add
     CoreModule.forRoot(),
     SharedModule,
     QuillModule.forRoot(),
-    AngularSvgIconModule.forRoot()
+    AngularSvgIconModule.forRoot(),
+      AuthModule.forRoot({
+          domain: environment.auth0.domain,
+          clientId: environment.auth0.clientId,
+          authorizationParams: {
+              connection: environment.auth0.authorizationParams.connection,
+              audience: environment.auth0.authorizationParams.audience,
+              redirect_uri:
+              environment.auth0.authorizationParams.redirect_uri,
+          },
+          httpInterceptor: {
+              allowedList: environment.auth0.httpInterceptor.allowedList,
+          },
+          errorPath: environment.auth0.errorPath,
+      }),
   ],
   bootstrap: [AppComponent],
   providers: [
@@ -87,6 +103,12 @@ import { SummaryDataAddDialogComponent } from './shared/dialogs/summary-data-add
       },
     },
 
+      {
+          provide: HTTP_INTERCEPTORS,
+          useClass: AuthHttpInterceptor,
+          multi: true,
+      },
+
     { provide: DateAdapter, useClass: LuxonDateAdapter },
     {
       provide: MAT_DATE_FORMATS,
@@ -100,8 +122,6 @@ import { SummaryDataAddDialogComponent } from './shared/dialogs/summary-data-add
         },
       },
     },
-
-    provideAuth(),
     provideIcons(),
     provideFuse({
       mockApi: { delay: 0, services: mockApiServices },

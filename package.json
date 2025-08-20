@@ -25,6 +25,7 @@
     "@angular/platform-browser": "18.2.4",
     "@angular/platform-browser-dynamic": "18.2.4",
     "@angular/router": "18.2.4",
+    "@auth0/auth0-angular": "^2.2.3",
     "@mat-datetimepicker/core": "^14.0.0",
     "@mat-datetimepicker/moment": "^14.0.0",
     "@ngbracket/ngx-layout": "^19.0.0",

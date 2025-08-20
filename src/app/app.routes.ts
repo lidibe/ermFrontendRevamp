@@ -1,9 +1,9 @@
-import { Route } from '@angular/router';
-import { initialDataResolver } from 'app/app.resolvers';
-import { AuthGuard } from 'app/core/auth/guards/auth.guard';
-import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
-import { LayoutComponent } from 'app/layout/layout.component';
-import { CallbackComponent } from './shared/components/callback/callback.component';
+import {Route} from '@angular/router';
+import {initialDataResolver} from 'app/app.resolvers';
+import {AuthGuard} from '@auth0/auth0-angular';
+import {NoAuthGuard} from 'app/core/auth/guards/noAuth.guard';
+import {LayoutComponent} from 'app/layout/layout.component';
+import {CallbackComponent} from "./shared/components/callback/callback.component";
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -30,7 +30,8 @@ export const appRoutes: Route[] = [
             layout: 'empty'
         },
         children: [
-            {path: 'implicit/callback', component: CallbackComponent, data: { title: 'Callback', titleI18n: 'callback' } },
+            {path: 'callback', component: CallbackComponent, data: {title: 'Callback', titleI18n: 'callback'}},
+            // {path: 'implicit/callback', component: CallbackComponent, data: { title: 'Callback', titleI18n: 'callback' } },
             {path: 'confirmation-required', loadChildren: () => import('app/modules/auth/confirmation-required/confirmation-required.routes')},
             {path: 'forgot-password', loadChildren: () => import('app/modules/auth/forgot-password/forgot-password.routes')},
             {path: 'reset-password', loadChildren: () => import('app/modules/auth/reset-password/reset-password.routes')},

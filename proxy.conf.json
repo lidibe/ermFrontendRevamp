@@ -1,6 +1,6 @@
 {
   "/ms/api/**": {
-    "target": "https://afxmms-api.uat.afreximbank.net",
+    "target": "http://localhost:9999",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true

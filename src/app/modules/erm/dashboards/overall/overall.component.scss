@@ -1,0 +1,24 @@
+#parent {
+  font-family: "Inter", sans-serif;
+}
+.chart-container {
+  width: 100%;
+}
+
+.summary-chart {
+  min-width: 664px;
+  max-width: 50%;
+}
+img {
+  width: fit-content !important;
+  height: fit-content !important;
+}
+.grid-cols-auto-fit {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  @media (min-width: 1280px) {
+    grid-template-columns: repeat(4, minmax(220px, 1fr));
+  }
+}
+.legend {
+  transform: translateY(-50%);
+}

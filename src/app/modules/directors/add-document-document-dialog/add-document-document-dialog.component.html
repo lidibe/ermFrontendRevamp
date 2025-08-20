@@ -1,0 +1,32 @@
+<app-dialog-container (onCloseDialog)="closeDialog()" title="Document upload">
+  <div class="flex flex-col justify-between w-full -mt-5">
+    <mat-expansion-panel [expanded]="false" #uploadedDocumentsPanel (opened)="uploadedDocumentsPanelState = true"
+      (closed)="uploadedDocumentsPanelState = false" class="bg-winter-sky mt-6 py-3 specific-class w-full">
+      <mat-expansion-panel-header class="bg-winter-sky specific-class">
+        <mat-panel-title class="mr-0">
+          <h3 class="text-base-lg font-bold text-primary">Uploaded Documents</h3>
+          <mat-icon class="icon-size-5 font-bold text-black ml-auto" *ngIf="!uploadedDocumentsPanelState"
+            [svgIcon]="'mat_solid:arrow_drop_down'"></mat-icon>
+          <mat-icon class="icon-size-5 font-bold text-black ml-auto" *ngIf="uploadedDocumentsPanelState"
+            [svgIcon]="'mat_solid:arrow_drop_up'"></mat-icon>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-uploaded-documents [documents]="data?.documents" [parentElementCode]="data?.director?.code" [elementCode]="data?.idCard?.code" [target]="'id-card'">
+      </app-uploaded-documents>
+    </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="true" #uploadDocumentsPanel (opened)="uploadDocumentsPanelState = true"
+      (closed)="uploadDocumentsPanelState = false" class="bg-winter-sky mt-6 py-3 specific-class w-full">
+      <mat-expansion-panel-header class="bg-winter-sky specific-class">
+        <mat-panel-title class="mr-0">
+          <h3 class="text-base-lg font-bold text-primary">Upload Files Here</h3>
+          <mat-icon class="icon-size-5 font-bold text-black ml-auto" *ngIf="!uploadDocumentsPanelState"
+            [svgIcon]="'mat_solid:arrow_drop_down'"></mat-icon>
+          <mat-icon class="icon-size-5 font-bold text-black ml-auto" *ngIf="uploadDocumentsPanelState"
+            [svgIcon]="'mat_solid:arrow_drop_up'"></mat-icon>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-documentation (uploadFile)="uploadFile($event)">
+      </app-documentation>
+    </mat-expansion-panel>
+  </div>
+</app-dialog-container>

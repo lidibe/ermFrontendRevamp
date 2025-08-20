@@ -1,0 +1,148 @@
+<ng-container *ngIf="meeting$ | async as meeting">
+  <div class="flex flex-col w-full px-8 space-y-8">
+    <div class="flex flex-col">
+      <div class="flex justify-between">
+        <div class="text-4xl font-bold truncate pt-6">
+          {{ meeting?.title }}
+        </div>
+
+        <div class="flex items-center justify-end pt-6">
+          <button mat-icon-button [matTooltip]="'Close'" [routerLink]="['../']">
+            <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="meeting.type" class="text-xl text-slate-800 truncate">
+        {{ meeting.type }}
+      </div>
+
+      <div>
+        {{ meeting?.starting_at | date : dateFormat }}
+        -
+        {{ meeting?.ending_at | date : dateFormat }}
+      </div>
+    </div>
+
+    <div class="flex flex-col">
+      <mat-accordian class="space-y-3 mb-8">
+        <mat-expansion-panel expanded hideToggle>
+          <mat-expansion-panel-header class="text-slate-800">
+            <mat-panel-title class="font-bold">
+              Attendees
+            </mat-panel-title>
+            <mat-panel-description class="justify-between">
+              &nbsp;
+              <mat-icon class="-mr-5" [svgIcon]="'heroicons_solid:user-group'"></mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <ng-container *ngIf="meeting.attendees?.length; else noAttendees">
+            <ng-container *ngIf="directorRolesById$ | async as rolesById">
+              <div class="flex flex-col space-y-4">
+                <ng-container *ngFor="let attendee of meeting.attendees">
+                  <div class="flex">
+                    <mat-icon [svgIcon]="'heroicons_solid:user'"></mat-icon>
+                    <div class="ml-6 leading-6">
+                      {{ attendee?.firstname }} {{ attendee?.lastname }}
+                      as
+                      {{ rolesById[attendee.role]?.label }}
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </ng-container>
+
+          <ng-template #noAttendees>
+            No attendees
+          </ng-template>
+        </mat-expansion-panel>
+      </mat-accordian>
+
+      <ng-container *ngIf="agendaItems$ | async as agendaItems">
+        <ng-container *ngIf="agendaItems?.length">
+          <mat-card class="font-bold px-6 py-3 mb-3 flex flex-row justify-between">
+            Agenda
+            <mat-icon class="-mr-2" [svgIcon]="'heroicons_solid:calendar-days'"></mat-icon>
+          </mat-card>
+
+          <mat-accordian class="space-y-3 mb-8">
+            <ng-container *ngFor="let agendaItem of agendaItems">
+              <mat-expansion-panel>
+                <mat-expansion-panel-header class="text-slate-800">
+                  <mat-panel-title>{{ agendaItem.title }}</mat-panel-title>
+
+                  <ng-container *ngIf="agendaItem?.decision?.due_at">
+                    <mat-panel-description>
+                      Action due at {{ agendaItem.decision.due_at | date : dateFormat }}
+                    </mat-panel-description>
+                  </ng-container>
+                </mat-expansion-panel-header>
+
+                <div class="flex flex-col w-full">
+                  <div class="mb-6"
+                      [innerHTML]="agendaItem.full_description"></div>
+
+                  <ng-container *ngIf="agendaItem?.decision?.owner">
+                    <div class="mb-3">
+                      Action assigned to
+                      <span class="font-bold">{{ agendaItem.decision.owner }}</span>:
+                    </div>
+                  </ng-container>
+
+                  <div [innerHTML]="agendaItem.decision.description"></div>
+                </div>
+
+                <mat-action-row>
+                  <button mat-button
+                      [disabled]="!agendaItem.decision?.documents?.length"
+                      (click)="onDocumentsDownloadClick(agendaItem)">
+                    Documents
+                    <mat-icon class="ml-1" [svgIcon]="'mat_solid:download'"></mat-icon>
+                  </button>
+                </mat-action-row>
+              </mat-expansion-panel>
+            </ng-container>
+          </mat-accordian>
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="freestandingDecisions$ | async as freestandingDecisions">
+        <ng-container *ngIf="freestandingDecisions?.length">
+          <mat-card class="font-bold p-3 mb-3 flex flex-row  justify-between">
+            Freestanding Decisions
+            <mat-icon class="-mr-2" [svgIcon]="'heroicons_solid:clipboard-document-check'"></mat-icon>
+          </mat-card>
+
+          <mat-accordian class="space-y-3 mb-8">
+            <ng-container *ngFor="let agendaItem of freestandingDecisions">
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header class="text-slate-800">
+                    <mat-panel-title>Assigned to {{ agendaItem.decision.owner }}</mat-panel-title>
+
+                    <ng-container *ngIf="agendaItem?.decision?.due_at">
+                      <mat-panel-description>
+                        Due at {{ agendaItem.decision.due_at | date : dateFormat }}
+                      </mat-panel-description>
+                    </ng-container>
+                  </mat-expansion-panel-header>
+
+                  <div [innerHTML]="agendaItem.decision.description"></div>
+
+                  <mat-action-row>
+                    <button mat-button
+                        [disabled]="!agendaItem.decision?.documents?.length"
+                        (click)="onDocumentsDownloadClick(agendaItem)">
+                      Documents
+                      <mat-icon class="ml-1" [svgIcon]="'mat_solid:download'"></mat-icon>
+                    </button>
+                  </mat-action-row>
+                </mat-expansion-panel>
+            </ng-container>
+          </mat-accordian>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>

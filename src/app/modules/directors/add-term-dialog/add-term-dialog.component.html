@@ -1,0 +1,35 @@
+<app-dialog-container (onCloseDialog)="closeDialog()" title="Add member">
+  <form *ngIf="form" [formGroup]="form" (submit)="onSubmit()">
+    <div class="flex">
+      <mat-form-field class="flex-auto">
+        <mat-label>Director term</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate placeholder="Start date" formControlName="from" />
+          <input matEndDate placeholder="End date" formControlName="to" />
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix 
+            [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker 
+            startView="year"
+            (monthSelected)="onMonthSelected($event, picker)"></mat-date-range-picker>
+        <mat-error *ngIf="form.get('from').hasError('required')">
+          Field Required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="
+        flex
+        justify-between
+        mt-4
+        sm:mt-6">
+      <button mat-flat-button type="button" (click)="closeDialog()">Cancel</button>
+      <button
+          mat-flat-button
+          [color]="'primary'"
+          [disabled]="form.invalid">
+        Save
+      </button>
+    </div>
+  </form>
+</app-dialog-container>

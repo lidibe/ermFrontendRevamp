@@ -1,0 +1,17 @@
+<div
+  class="card flex flex-row gap-4 p-4 border-2 {{ title }}-border {{
+    title
+  }}-lighter-bg rounded-lg h-full"
+  [ngClass]="{ 'items-center justify-center m-auto flex-nowrap gap-0': !para }"
+>
+  <img src="assets/icons/risk/{{ title }}.svg" alt="scale" />
+  <div
+    class="inline-flex flex-col"
+    [ngClass]="{ 'gap-0': !para, 'gap-2': para }"
+  >
+    <p class="{{ title }}-text text-xl font-bold leading-5">
+      {{ header }}
+    </p>
+    <p class="text-gray-600 text-md">{{ para }}</p>
+  </div>
+</div>

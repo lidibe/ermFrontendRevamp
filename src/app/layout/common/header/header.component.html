@@ -1,0 +1,24 @@
+<div
+  class="
+    relative
+    flex flex-col
+    sm:flex-row
+    flex-0
+    sm:items-center sm:justify-between
+    py-8
+    px-6
+    md:px-8
+    border-b
+  "
+>
+  <!-- Loader -->
+  <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+    <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+  </div>
+  <!-- Title -->
+  <div class="text-4xl font-extrabold tracking-tight">{{title}}</div>
+  <!-- Actions -->
+  <div class="flex flex-shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+    <ng-content></ng-content>
+  </div>
+</div>

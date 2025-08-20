@@ -1,0 +1,13 @@
+<div id="chart">
+    <facebook-content-loader *ngIf='isLoading'></facebook-content-loader>
+    <apx-chart
+            [series]="chartOptions?.series"
+            [chart]="chartOptions?.chart"
+            [legend]="chartOptions?.legend"
+            [dataLabels]="chartOptions?.dataLabels"
+            [colors]="chartOptions?.colors"
+            [yaxis]="chartOptions?.yaxis"
+            [xaxis]="chartOptions?.xaxis"
+            [grid]="chartOptions?.grid"
+    ></apx-chart>
+</div>

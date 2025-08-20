@@ -1,0 +1,213 @@
+<div class="flex flex-col flex-auto w-full p-2 md:py-8 md:px-4">
+  <div class="flex flex-wrap w-full max-w-screen-xl mx-auto">
+    <div class="flex items-center justify-between w-full my-4 pl-4 sm:pr-4">
+      <div class="mr-6">
+        <h2
+          class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 md:leading-10 truncate"
+        >
+          ERM Dashboard
+        </h2>
+        <div class="font-medium tracking-tight text-secondary"></div>
+      </div>
+    </div>
+
+    <div class="flex flex-row flex-wrap justify-center">
+      <div class="summary-chart h-75 p-1 bg-transparent">
+        <div
+          class="flex flex-col flex-auto p-6 pb-4 bg-card bg-transparent rounded overflow-hidden"
+        >
+          <div class="flex items-start justify-between">
+            <div class="flex flex-col">
+              <div
+                class="font-bold text-md text-secondary uppercase tracking-wider"
+              ></div>
+              <div class="text-sm text-hint font-medium"></div>
+            </div>
+            <div class="ml-2">
+              <button
+                class="h-6 min-h-6 px-2 bg-hover"
+                mat-button
+                [matMenuTriggerFor]="monthMenu"
+              >
+                <span class="font-medium text-sm text-secondary">{{
+                  monthLabel
+                }}</span>
+              </button>
+              <mat-menu #monthMenu="matMenu">
+                <span *ngFor="let month of months">
+                  <button
+                    mat-menu-item
+                    (click)="setMonth(month.id, month.label)"
+                  >
+                    {{ month.label }}
+                  </button>
+                </span>
+              </mat-menu>
+            </div>
+            <div class="ml-2">
+              <button
+                class="h-6 min-h-6 px-2 bg-hover"
+                mat-button
+                [matMenuTriggerFor]="yearMenu"
+              >
+                <span class="font-medium text-sm text-secondary">{{
+                  year
+                }}</span>
+              </button>
+              <mat-menu #yearMenu="matMenu">
+                <span *ngFor="let year of years">
+                  <button mat-menu-item (click)="setYear(year)">
+                    {{ year }}
+                  </button>
+                </span>
+              </mat-menu>
+            </div>
+          </div>
+          <div class="chart-container h-75 mt-auto">
+            <fusioncharts
+              [width]="overallWidth"
+              [height]="overallHeight"
+              [type]="type"
+              [dataFormat]="dataFormat"
+              [dataSource]="summary"
+              *ngIf="displaySummary"
+            >
+            </fusioncharts>
+          </div>
+          <treo-alert
+            [appearance]="'outline'"
+            [type]="'error'"
+            *ngIf="summary_value <= 0.5"
+          >
+            Overall risk profile for the month of {{ monthLabel }} {{ year }} is
+            RED that the profile is within the Bank's risk appetite.
+          </treo-alert>
+
+          <treo-alert
+            [appearance]="'outline'"
+            [type]="'warning'"
+            *ngIf="summary_value > 0.5 && summary_value < 0.75"
+          >
+            Overall risk profile for the month of {{ monthLabel }} {{ year }} is
+            AMBER that the profile is within the Bank's risk appetite.
+          </treo-alert>
+
+          <treo-alert
+            [appearance]="'outline'"
+            [type]="'success'"
+            *ngIf="summary_value >= 0.75"
+          >
+            Overall risk profile for the month of {{ monthLabel }} {{ year }} is
+            GREEN that the profile is within the Bank's risk appetite.
+          </treo-alert>
+        </div>
+      </div>
+
+      <!-- <div class="flex flex-auto w-1/2  h-75 p-1 bg-transparent"> -->
+      <div class="flex-1 md:flex-shrink-0 h-75 p-1 bg-transparent">
+        <div
+          class="flex flex-col flex-auto p-6 pb-4 bg-card bg-transparent rounded overflow-hidden"
+        >
+          <div class="flex items-start justify-between">
+            <div class="flex flex-col">
+              <!--div class="font-bold text-md text-secondary uppercase tracking-wider">Additional comments</div-->
+              <div class="text-sm text-hint font-medium"></div>
+              <ng-container *ngIf="showOverallComments; else noOverallComments">
+                <treo-alert
+                  [appearance]="'outline'"
+                  [type]="'accent'"
+                  [showIcon]="false"
+                >
+                  <!--span treoAlertTitle>Additional comments</span-->
+                  <span [innerHTML]="overallComments"></span>
+                </treo-alert>
+              </ng-container>
+              <ng-template #noOverallComments>
+                <treo-alert [appearance]="'outline'" [type]="'accent'">
+                  There is no data!
+                </treo-alert>
+                <div
+                  class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center"
+                >
+                  There is no data!
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full justify-center"
+    >
+      <div
+        class="h-75 p-1 bg-transparent"
+        *ngFor="let item of data; let num = index"
+      >
+        <div
+          class="flex flex-col flex-auto p-6 pb-4 bg-card bg-transparent rounded overflow-hidden"
+        >
+          <div class="flex items-start justify-between">
+            <div class="flex flex-col">
+              <div
+                class="font-bold text-md text-secondary uppercase tracking-wider"
+              >
+                {{ item.riskAreaName }}
+              </div>
+              <div class="text-sm text-hint font-medium"></div>
+            </div>
+          </div>
+          <div class="chart-container h-75 mt-auto">
+            <fusioncharts
+              [width]="width"
+              [height]="height"
+              [type]="type"
+              [dataFormat]="dataFormat"
+              [dataSource]="item.data"
+              *ngIf="displayOthers"
+            >
+            </fusioncharts>
+          </div>
+          <div class="flex items-center w-full h-75 mt-auto">
+            <treo-alert
+              [appearance]="'outline'"
+              [type]="'error'"
+              *ngIf="item.data.dials.dial[0].value <= 50"
+            >
+              Overall risk profile for the month of {{ monthLabel }}
+              {{ year }} is RED indicating that the profile is in breach of the
+              Bank's approved risk appetite and requires immediate management
+              action
+            </treo-alert>
+
+            <treo-alert
+              [appearance]="'outline'"
+              [type]="'warning'"
+              *ngIf="
+                item.data.dials.dial[0].value > 50 &&
+                item.data.dials.dial[0].value < 75
+              "
+            >
+              Overall risk profile for the month of {{ monthLabel }}
+              {{ year }} is AMBER indicating that the profile is within risk
+              appetite but may deteriorate if not adequately managed. It
+              requires management's attention in the short -to- medium term to
+              improve the risk profile.
+            </treo-alert>
+
+            <treo-alert
+              [appearance]="'outline'"
+              [type]="'success'"
+              *ngIf="item.data.dials.dial[0].value >= 75"
+            >
+              Overall risk profile for the month of {{ monthLabel }}
+              {{ year }} is GREEN indicating that the profile is within the
+              Bank's risk appetite.
+            </treo-alert>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

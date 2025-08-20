@@ -1,0 +1,10 @@
+<app-dialog-container (onCloseDialog)="closeDialog()" title="Add Committee">
+  <app-committee-form
+    *ngIf="data"
+    (onSubmit)="onSubmit($event)"
+    [members]="members"
+    [roles]="roles"
+    buttonLabel="Save"
+  >
+  </app-committee-form>
+</app-dialog-container>

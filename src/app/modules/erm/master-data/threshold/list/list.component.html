@@ -1,0 +1,132 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden bg-card dark:bg-transparent">
+
+    <fuse-alert class="w-full flex pt-4 pr-16 pl-16"
+                *ngIf="showAlert"
+                [appearance]="'soft'"
+                [type]="alert.type"
+                [@shake]="alert.type === 'error'"
+                [showIcon]="false">
+        {{alert.message}}
+    </fuse-alert>
+
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+        <div
+                class="absolute inset-x-0 bottom-0"
+                *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <div class="text-4xl font-extrabold tracking-tight">Thresholds</div>
+        <div class="flex flex-shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-50 w-80">
+                <mat-label>KRI</mat-label>
+                <mat-select
+                        class="mr-1.5"
+                        [(ngModel)]="query.kriId">
+                    <mat-option
+                            *ngFor="let kri of kris;"
+                            [value]="kri.id">{{kri.key}} - {{kri.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-50 pl-6">
+                <mat-label>Month</mat-label>
+                <mat-select
+                        class="mr-1.5"
+                        [(ngModel)]="query.month" >
+                    <mat-option
+                            *ngFor="let month of months;"
+                            [value]="month.id">{{month.value}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-50 pl-6">
+                <mat-label>Year</mat-label>
+                <mat-select
+                        class="mr-1.5"
+                        [(ngModel)]="query.year">
+                    <mat-option
+                            *ngFor="let year of years;"
+                            [value]="year">{{year}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <button
+                    class="ml-4 mt-6"
+                    mat-flat-button
+                    [color]="'secondary'"
+                    (click)="filterButtonPress.next(0)" *ngIf="!filterEnabled">
+                <mat-icon [svgIcon]="'heroicons_outline:filter'"></mat-icon>
+            </button>
+
+            <button
+                    class="ml-4 mt-6"
+                    mat-flat-button
+                    [color]="'warn'"
+                    (click)="filterButtonPress.next(0)" *ngIf="filterEnabled">
+                <mat-icon [svgIcon]="'heroicons_outline:filter'"></mat-icon>
+            </button>
+
+            <button
+                    class="ml-4 mt-6"
+                    mat-flat-button
+                    [color]="'secondary'"
+                    (click)="resetButtonPress.next(0)">
+                <mat-icon [svgIcon]="'heroicons_outline:receipt-refund'"></mat-icon>
+                <span class="ml-2 mr-1">Reset</span>
+            </button>
+
+            <button
+                    class="ml-4 mt-6"
+                    mat-flat-button
+                    [color]="'primary'"
+                    (click)="createThreshold()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">Add</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="flex flex-auto overflow-hidden">
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden">
+
+            <ng-container *ngIf="thresholdsCount > 0; else noThresholds">
+                <div
+                        class="overflow-x-auto sm:overflow-y-auto"
+                        cdkScrollable>
+                    <table
+                            class="w-full min-w-320 table-fixed bg-transparent"
+                            [ngClass]="{'pointer-events-none': isLoading}"
+                            mat-table
+                            matSort
+                            [matSortActive]="'name'"
+                            [matSortDisableClear]="true"
+                            [matSortDirection]="'asc'"
+                            [multiTemplateDataRows]="true"
+                            [dataSource]="thresholds$"
+                            [trackBy]="trackByFn">
+
+                        <!-- Columns definitions remain same -->
+                        ...
+                    </table>
+                </div>
+
+                <mat-paginator
+                        class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                        [ngClass]="{'pointer-events-none': isLoading}"
+                        [length]="pagination.length"
+                        [pageIndex]="pagination.page"
+                        [pageSize]="pagination.size"
+                        [pageSizeOptions]="[5, 10, 25, 100]"
+                        [showFirstLastButtons]="true"></mat-paginator>
+            </ng-container>
+
+            <ng-template #noThresholds>
+                <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">There are no Thresholds!</div>
+            </ng-template>
+        </div>
+    </div>
+
+</div>

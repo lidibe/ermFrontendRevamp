@@ -1,0 +1,60 @@
+<div class="flex flex-col flex-auto items-center sm:justify-center min-w-0 md:p-8">
+    <div class="flex md:w-full md:max-w-6xl sm:shadow-md rounded-lg overflow-hidden sm:bg-card">
+        <div class="relative hidden md:flex flex-auto items-center justify-center p-16 overflow-hidden bg-primary-700 dark:bg-gray-700 text-white"
+             style="background-image: url('/assets/images/auth-bg.png')">
+            <!-- Content -->
+            <div class="w-full max-w-md">
+                <div class="text-4xl font-bold leading-tight">
+                    <div>Afreximbank</div>
+                    <div>BOSE Management System</div>
+                </div>
+            </div>
+        </div>
+        <div class="w-full sm:w-auto py-8 px-4 sm:p-12 md:p-16">
+            <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0">
+                <!-- Logo -->
+                <div class="w-auto" style="width: 100px; align-content: center;">
+                    <img src="/assets/images/logo/logo.jpeg" style="width: 100px;">
+                </div>
+
+                <!-- Title -->
+                <!-- <div class="mt-8 text-4xl font-extrabold tracking-tight leading-tight">Sign in</div> -->
+
+                <!-- Alert -->
+                <fuse-alert
+                    class="mt-8 -mb-4"
+                    *ngIf="showAlert"
+                    [appearance]="'outline'"
+                    [showIcon]="false"
+                    [type]="alert.type"
+                    [@shake]="alert.type === 'error'">
+                    {{alert.message}}
+                </fuse-alert>
+
+                <!-- Sign in form -->
+                <form
+                    class="mt-8">
+
+                    <!-- Separator -->
+                    <div class="flex items-center mt-8">
+                        <div class="flex-auto mt-px border-t"></div>
+                        <div class="mx-2 text-secondary">Please enter your Okta single sign-on (SSO) information below to gain access to the platform.                        </div>
+                        <div class="flex-auto mt-px border-t"></div>
+                    </div>
+
+                    <!-- Single sign-on buttons -->
+                    <div class="flex items-center mt-8 space-x-4">
+                        <button
+                            class="treo-mat-button-large w-full mt-6 btn btn-primary"
+                            type="button"
+                            (click)="ssoSignIn()">
+                                <span>
+                                    Sign in with Okta
+                                </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

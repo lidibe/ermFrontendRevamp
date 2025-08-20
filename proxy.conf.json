@@ -1,0 +1,8 @@
+{
+  "/ms/api/**": {
+    "target": "https://afxmms-api.uat.afreximbank.net",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true
+  }
+}

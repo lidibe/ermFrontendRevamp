@@ -1,0 +1,141 @@
+<app-page-layout>
+  <app-header
+    title="User Groups"
+    [isLoading]="
+      isUserLoading ||
+      isGroupLoading ||
+      isAddGroupLoading ||
+      isUpdateGroupLoading
+    "
+  >
+    <button
+      class="ml-4"
+      mat-flat-button
+      [disabled]="isUserLoading"
+      color="primary"
+      (click)="createUserGroup()"
+    >
+      <mat-icon svgIcon="heroicons_outline:plus"></mat-icon>
+      <span class="ml-2 mr-1">Add</span>
+    </button>
+  </app-header>
+
+  <div class="flex flex-auto overflow-hidden">
+    <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden">
+      <ng-container *ngIf="groups?.length > 0; else noGroupsArea">
+        <div class="overflow-x-auto sm:overflow-y-auto" cdkScrollable>
+          <table
+            class="w-full min-w-320 table-fixed bg-transparent"
+            mat-table
+            [multiTemplateDataRows]="true"
+            [dataSource]="groups"
+          >
+            <ng-container matColumnDef="name">
+              <th
+                class="bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                Name
+              </th>
+              <td class="pr-4 truncate" mat-cell *matCellDef="let item">
+                {{ item.name }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="members">
+              <th
+                class="bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                Members count
+              </th>
+              <td class="pr-4 truncate" mat-cell *matCellDef="let item">
+                {{ item.members.length }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="details">
+              <th
+                class="w-24 pr-8 bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                Details
+              </th>
+              <td class="pr-8" mat-cell *matCellDef="let item">
+                <button
+                  class="min-w-10 min-h-7 h-7 px-2 leading-6"
+                  mat-stroked-button
+                  (click)="toggleDetails(item)"
+                >
+                  <mat-icon
+                    class="icon-size-5"
+                    [svgIcon]="
+                      selectedGroup?.code === item?.code
+                        ? 'heroicons_solid:chevron-up'
+                        : 'heroicons_solid:chevron-down'
+                    "
+                  ></mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="expandedDetail">
+              <td
+                class="p-0 border-b-0"
+                mat-cell
+                *matCellDef="let item"
+                [attr.colspan]="columns.length"
+              >
+                <div
+                  class="shadow-lg overflow-hidden"
+                  [@expandCollapse]="
+                    selectedGroup?.code === item.code ? 'expanded' : 'collapsed'
+                  "
+                >
+                  <div class="flex border-b">
+                    <div class="flex flex-col w-full">
+                      <app-user-groups-form
+                        *ngIf="selectedGroup"
+                        class="flex flex-auto pl-12 pt-12 pr-12 pb-12"
+                        (onSubmit)="onUpdate($event)"
+                        [users]="users"
+                        buttonLabel="Update"
+                        [selectedGroup]="selectedGroup"
+                      >
+                      </app-user-groups-form>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr
+              class="shadow"
+              mat-header-row
+              *matHeaderRowDef="columns; sticky: true"
+            ></tr>
+            <tr
+              class="h-18 hover:bg-hover"
+              mat-row
+              *matRowDef="let row; columns: columns"
+            ></tr>
+            <tr
+              class="h-0"
+              mat-row
+              *matRowDef="let row; columns: ['expandedDetail']"
+            ></tr>
+          </table>
+        </div>
+      </ng-container>
+
+      <ng-template #noGroupsArea>
+        <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">
+          There are no user groups!
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</app-page-layout>

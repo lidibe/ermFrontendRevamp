@@ -1,0 +1,46 @@
+<app-dialog-container (onCloseDialog)="closeDialog()" title="Add member">
+  <form *ngIf="form" [formGroup]="form" (submit)="onSubmit()">
+    <div class="flex">
+      <mat-form-field class="flex-auto">
+        <mat-label>Attendee</mat-label>
+        <mat-select [formControl]="form.get('member')">
+          <mat-option *ngFor="let director of directors"
+              [value]="director.code">
+            {{ director.firstname }} {{ director.lastname }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('member').hasError('required')">
+          Field Required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="flex">
+      <mat-form-field class="flex-auto">
+        <mat-label>Role</mat-label>
+        <mat-select [formControl]="form.get('role')">
+          <mat-option *ngFor="let role of roles"
+              [value]="role.value">
+            {{ role.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('role').hasError('required')">
+          Field Required
+        </mat-error>
+      </mat-form-field>
+
+    </div>
+
+    <div class="
+        flex
+        justify-between
+        mt-4
+        sm:mt-6">
+    <button mat-flat-button type="button" (click)="closeDialog()">Cancel</button>
+    <button
+    mat-flat-button
+    [color]="'primary'"
+    [disabled]="form.invalid">Save</button>
+    </div>
+  </form>
+</app-dialog-container>

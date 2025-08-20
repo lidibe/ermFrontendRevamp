@@ -1,0 +1,72 @@
+<div class="flex flex-col flex-auto w-full p-2 md:py-8 md:px-4">
+
+    <div class="flex flex-wrap w-full max-w-screen-xl mx-auto">
+
+        <div class="flex items-center justify-between w-full my-4 pl-4 sm:pr-4">
+            <div class="mr-6">
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 md:leading-10 truncate">Dashboard</h2>
+                <div class="font-medium tracking-tight text-secondary"></div>
+            </div>
+        </div>
+
+        <!-- Purchases -->
+        <div class="flex flex-auto w-1/3 min-w-180 h-110 p-4 bg-transparent">
+            <div class="flex flex-col flex-auto p-6 pb-4 bg-card shadow rounded overflow-hidden">
+                <div class="flex items-start justify-between">
+                    <div class="flex flex-col">
+                        <div class="font-bold text-md text-secondary uppercase tracking-wider">Occurrences</div>
+                        <div class="text-sm text-hint font-medium">Report for Occurrences of differences in critical fields</div>
+                    </div>
+                </div>
+                <div class="flex items-center w-140 h-120 mt-auto">
+                    <app-bar-chart [data]="cfcoData" [labels]="cfcoLabels" width="800"></app-bar-chart>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-auto w-1/3 min-w-180 h-110 p-4 bg-transparent">
+            <div class="flex flex-col flex-auto p-6 pb-4 bg-card shadow rounded overflow-hidden">
+                <div class="flex items-start justify-between">
+                    <div class="flex flex-col">
+                        <div class="font-bold text-md text-secondary uppercase tracking-wider">Party</div>
+                        <div class="text-sm text-hint font-medium">Report for Parties</div>
+                    </div>
+                </div>
+                <div class="flex items-center w-140 h-120 mt-auto">
+                    <app-bar-chart [data]="ptyData" [labels]="ptyLabels" width="800"></app-bar-chart>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-auto w-1/3 min-w-180 h-110 p-4 bg-transparent">
+            <div class="flex flex-col flex-auto p-6 pb-4 bg-card shadow rounded overflow-hidden">
+                <div class="flex items-start justify-between">
+                    <div class="flex flex-col">
+                        <div class="font-bold text-md text-secondary uppercase tracking-wider">Party by Classification code</div>
+                        <div class="text-sm text-hint font-medium">Report for Parties by Classification code</div>
+                    </div>
+                </div>
+                <div class="flex items-center w-140 h-120 mt-auto">
+                    <app-bar-chart [data]="ptyCCodeData" [labels]="ptyCCodeLabels" width="800"></app-bar-chart>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-auto w-1/3 min-w-180 h-110 p-4 bg-transparent">
+            <div class="flex flex-col flex-auto p-6 pb-4 bg-card shadow rounded overflow-hidden">
+                <div class="flex items-start justify-between">
+                    <div class="flex flex-col">
+                        <div class="font-bold text-md text-secondary uppercase tracking-wider">Party Conjoin</div>
+                        <div class="text-sm text-hint font-medium">Report for Party Conjoin</div>
+                    </div>
+                </div>
+                <div class="flex items-center w-140 h-120 mt-auto">
+                    <app-bar-chart [data]="ptyCjData" [labels]="ptyCjLabels" width="800"></app-bar-chart>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+

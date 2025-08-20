@@ -1,0 +1,17 @@
+<div class="flex m-auto gap-3 items-center justify-center flex-nowrap">
+  <img src="assets/icons/risk/{{ generalScale }}.svg" alt="scale" />
+  <div
+    *ngIf="ratio !== undefined"
+    class="{{ generalScale }}-text {{
+      generalScale
+    }}-border flex items-center justify-center gap-1 border-2 rounded-md px-2 py-1 font-bold flex-nowrap"
+  >
+    <svg-icon
+      src="assets/icons/risk/{{ scale }}Vector.svg"
+      svgClass="{{ generalScale }}-darker-fill h-full aspect-square"
+    ></svg-icon>
+    <p class="m-auto text-center inline-block h-full">
+      {{ ratio > 0 ? "+" : "" }}{{ ratio | number : "1.0-2" }}
+    </p>
+  </div>
+</div>

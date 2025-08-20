@@ -1,0 +1,1081 @@
+<div class="flex flex-col w-full">
+  <ng-container *ngIf="!editMode">
+    <!-- Header -->
+    <div class="
+        relative
+        w-full
+        h-28
+        md:h-32
+        px-8
+        sm:px-12
+        bg-white
+        dark:bg-accent-700
+      ">
+      <!-- Close button -->
+<!--       <div class="flex items-center justify-end w-full max-w-3xl mx-auto pt-6">
+        <button mat-icon-button [matTooltip]="'Close'" [routerLink]="['../']">
+          <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+        </button>
+      </div> -->
+    </div>
+
+    <!-- Director -->
+    <div class="
+        relative
+        flex flex-col flex-auto
+        items-center
+        p-6
+        pt-0
+        sm:p-12 sm:pt-0
+      ">
+      <div class="w-full max-w-3xl">
+        <div class="flex flex-auto items-end flex-wrap -mt-22">
+          <div class="
+              flex
+              items-center
+              justify-center
+              w-32
+              h-32
+              rounded-full
+              overflow-hidden
+              ring-4 ring-bg-card
+            ">
+            <ng-container *ngIf="directorProfileImage$ | async as profileImg">
+              <img class="w-32" [src]="profileImg" />
+            </ng-container>
+
+            <div class="
+                flex
+                items-center
+                justify-center
+                w-full
+                h-full
+                rounded
+                overflow-hidden
+                uppercase
+                text-8xl
+                font-bold
+                leading-none
+                bg-gray-100
+                text-gray-900
+                dark:bg-gray-700 dark:text-gray-200
+              ">
+              {{ director.firstname?.charAt(0) + director.lastname?.charAt(0) }}
+            </div>
+          </div>
+          <!-- Actions -->
+          <div class="flex gap-2 mt-4 md:mt-0 items-center ml-auto mb-1 self-start">
+            <button class="-ml-3 mr-auto text-primary py-2 px-4 text-base leading-5 font-medium" [routerLink]="['../']" mat-flat-button>
+              <mat-icon class="icon-size-4" svgIcon="mat_solid:arrow_back_ios"></mat-icon> Back
+            </button>
+            <button *ngIf="director?.is_deleted" type="button" (click)="unArchiveDirector()"
+            class="bg-teal-tranquility text-primary border border-solid flex-row-reverse py-2 px-5 text-base leading-5 font-medium" mat-button>
+            <mat-icon class="icon-size-5 text-primary" [svgIcon]="'mat_solid:settings_backup_restore'"></mat-icon>
+            <span class="mr-2">UnArchive</span>
+            </button>
+            <ng-container *ngIf="!director?.is_deleted">
+            <button type="button" (click)="toggleEditMode()"
+            class="bg-teal-tranquility text-primary border border-solid flex-row-reverse py-2 px-5 text-base leading-5 font-medium" mat-button>
+            <mat-icon class="icon-size-5 text-primary" [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
+            <span class="mr-2">Edit</span>
+            </button>
+
+            <button type="button" mat-button color="warn" (click)="deleteDirector()"
+            class="bg-white border border-solid flex-row-reverse border-red-300 py-2 px-5 text-base leading-5 font-medium">
+            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:archive-box-x-mark'"></mat-icon>
+            <span class="mr-2">Archive</span>
+            </button>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- Name -->
+        <div class="flex items-center flex-wrap">
+          <div class="mt-3 mr-3 text-4xl font-bold truncate">
+            {{ director?.title | titlecase }} {{ director?.firstname }} {{ director?.lastname }}
+          </div>
+
+          <ng-container *ngIf="director.shareholding_class">
+            <div class="mt-3 w-full mb-4 block md:hidden">
+              <mat-chip-set>
+                <ng-container *ngIf="director.shareholding_class">
+                  <mat-chip class="rounded-md bg-sky-blue" disableRipple="true">
+                    <span class="text-ocean-blue">{{ getDirectorClassForChip(director.shareholding_class) }}</span>
+                  </mat-chip>
+                </ng-container>
+                <ng-container *ngIf="director.type">
+                  <mat-chip class="rounded-md bg-sand-beige" disableRipple="true">
+                    <span class="text-caramel-brown">{{ director.type | titlecase }}</span>
+                  </mat-chip>
+                </ng-container>
+              </mat-chip-set>
+            </div>
+          </ng-container>
+        </div>
+
+        <ng-container *ngIf="!director.is_deleted && director.status">
+          <div class="py-0.5 px-3 rounded-full text-sm font-semibold w-18"
+            [ngClass]="{'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': director.status === 'INACTIVE',
+                              'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': director.status === 'ACTIVE'}">
+            {{director.status}}
+          </div>
+        </ng-container>
+
+        <div class="flex flex-col mt-4 pt-6 border-t space-y-6">
+
+          <ng-container *ngIf="director?.citizenship && director?.citizenship?.length > 0">
+            <div class="flex sm:items-center">
+              <strong>Nationalities: </strong>
+              <div class="ml-2 leading-6">
+                <span *ngFor="let c of director?.citizenship" [ngClass]="'fi fi-' + (c || '') + ' mr-2 flag-icon'"></span>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="director.position">
+            <div class="flex sm:items-center">
+              <mat-icon [svgIcon]="'heroicons_outline:briefcase'"></mat-icon>
+              <div class="ml-2 leading-6">
+                <strong>Position: </strong> {{ director.position }}</div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="director.institution">
+            <div class="flex sm:items-center">
+              <mat-icon [svgIcon]="'heroicons_outline:briefcase'"></mat-icon>
+              <div class="ml-2 leading-6">
+                <strong>Institution: </strong> {{ director.institution }}</div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="director.language">
+            <div class="flex">
+              <mat-icon [svgIcon]="'mat_outline:translate'"></mat-icon>
+              <div class="min-w-0 ml-2 space-y-1">
+                <div class="flex items-center leading-6">
+                  <strong class="mr-1">Language:</strong>
+                  {{ directorLanguagesByCode[director?.language]?.label }}
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="director.shipping_address">
+            <div class="flex sm:items-center">
+              <mat-icon [svgIcon]="'heroicons_outline:home'"></mat-icon>
+              <div class="ml-2 leading-6">
+                <strong>Shipping Address: </strong>
+                {{ director?.shipping_address?.line1 }},
+                {{ director?.shipping_address?.city }} -
+                {{ director?.shipping_address?.state }},
+                {{ getCountryByIso(director?.shipping_address?.country)?.name }}
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="director.billing_address">
+            <div class="flex sm:items-center">
+              <mat-icon [svgIcon]="'heroicons_outline:building-office'"></mat-icon>
+              <div class="ml-2 leading-6">
+                <strong>Billing Address: </strong>
+                {{ director?.billing_address?.line1 }},
+                {{ director?.billing_address?.city }} -
+                {{ director?.billing_address?.state }},
+                {{ getCountryByIso(director?.billing_address?.country)?.name }}
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="director.type && director.linked_director_details?.code">
+            <div class="flex sm:items-center">
+              <mat-icon [svgIcon]="'heroicons_outline:users'"></mat-icon>
+              <div class="ml-2 leading-6">
+                <strong>Linked Director: </strong>
+                {{ director?.linked_director_details?.firstname }}
+                {{ director?.linked_director_details?.lastname }}
+              </div>
+              <ng-container *ngIf="director.linked_director_details.shareholding_class as cls">
+                <div class="ml-2 leading-6">
+                  <mat-chip-list>
+                    <mat-chip class="rounded-md bg-sky-blue -mt-1" disableRipple="true">
+                      <span class="text-ocean-blue">{{ getDirectorClassForChip(cls) }}</span>
+                    </mat-chip>
+                  </mat-chip-list>
+                </div>
+              </ng-container>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="director.hiring_date">
+            <div class="flex sm:items-center">
+              <mat-icon [svgIcon]="'heroicons_outline:calendar'"></mat-icon>
+              <div class="ml-2 leading-6"><strong>Hiring Date:</strong> {{ director.hiring_date | date: 'MMM dd, yyyy'}}</div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="director?.assignmentsDetails && director?.assignmentsDetails?.length">
+            <hr />
+              <div class="flex sm:items-center">
+                <h2 class="text-xl font-semibold text-primary">Assignments</h2>
+              </div>
+              <ng-container *ngFor="
+                            let assignment of director?.assignmentsDetails; let i = index
+                            trackBy:  trackByFn">
+                <div class="flex justify-between sm:items-center">
+                  <div class="flex gap-x-2">
+                    <mat-icon class="text-primary" [svgIcon]="'heroicons_solid:building-library'"></mat-icon>
+                    <div class="leading-6 font-semibold">
+                      {{ assignment?.organization?.name }}
+                    </div>
+                  </div>
+                  <mat-icon class="text-primary cursor-pointer" [svgIcon]="'heroicons_solid:eye'"
+                    [routerLink]="['/bosedr/organizations', assignment?.organization?.code]"></mat-icon>
+                </div>
+                 <div class="flex justify-between sm:items-center ml-4" *ngFor="
+                            let committee of assignment?.committees
+                            trackBy:  trackByFn">
+                  <div class="flex gap-x-2">
+                    <mat-icon class="text-primary" [svgIcon]="'heroicons_solid:briefcase'"></mat-icon>
+                    <div class="leading-6">
+                      {{ committee?.name }}
+                    </div>
+                  </div>
+                  <mat-icon class="text-primary cursor-pointer" [svgIcon]="'heroicons_solid:eye'"
+                    [routerLink]="['/bosedr/committees', committee?.code]"></mat-icon>
+                </div>
+              </ng-container>
+            </ng-container>
+
+          <hr />
+
+          <div class="flex sm:items-center">
+            <h2 class="text-xl font-semibold text-primary">Contact</h2>
+          </div>
+
+          <div class="flex">
+            <mat-icon [svgIcon]="'mat_outline:mail'"></mat-icon>
+            <div class="min-w-0 ml-2 space-y-1">
+              <ng-container>
+                <div *ngIf="director.email" class="flex items-center leading-6">
+                  <a class="hover:underline" [href]="'mailto:' + director?.email" target="_blank">
+                    {{ director?.email }}
+                  </a>
+                </div>
+                <div *ngIf="director.email2" class="flex items-center leading-6">
+                  <a class="hover:underline" [href]="'mailto:' + director?.email2" target="_blank">
+                    {{ director?.email2 }}
+                  </a>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+
+          <ng-container *ngIf="director.mobile || director.telephone || director.fax">
+            <div class="flex">
+              <mat-icon [svgIcon]="'heroicons_outline:phone'"></mat-icon>
+              <div class="min-w-0 ml-2 space-y-1">
+                <ng-container>
+                  <div *ngIf="director.mobile" class="flex items-center leading-6">
+                    {{ director?.mobile }}
+                  </div>
+                  <div *ngIf="director.telephone" class="flex items-center leading-6">
+                    {{ director?.telephone }}
+                  </div>
+                  <div *ngIf="director.fax" class="flex items-center leading-6">
+                    {{ director?.fax }}
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </ng-container>
+
+<!--           <ng-container *ngIf="directorCommittees$ | async as committees">
+            <ng-container *ngIf="committees?.length">
+              <hr />
+
+              <div class="flex sm:items-center">
+                <h2 class="text-xl font-semibold text-primary">Committees</h2>
+              </div>
+
+              <ng-container *ngFor="let committee of committees">
+                <div class="flex sm:items-center">
+                  <mat-icon [svgIcon]="'heroicons_outline:user-group'"></mat-icon>
+                  <div class="ml-2 leading-6">
+                    {{ committee?.name }}
+                  </div>
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-container> -->
+
+          <ng-container *ngIf="director.terms?.length">
+            <hr />
+
+            <div class="flex sm:items-center">
+              <h2 class="text-xl font-semibold text-primary">Terms</h2>
+            </div>
+
+            <ng-container *ngIf="getCategorizedTerms() as categorizedTerms">
+                <!-- Current Term -->
+                <ng-container *ngIf="categorizedTerms.currentTerm">
+                    <div class="flex sm:items-center mt-4">
+                        <mat-icon [svgIcon]="'heroicons_outline:calendar'"></mat-icon>
+                        <div class="ml-2 leading-6">
+                            <strong>Current Term:</strong>
+                            {{ categorizedTerms.currentTerm.from | date : dateFormat }} - {{ categorizedTerms.currentTerm.to | date : dateFormat }}
+                        </div>
+                    </div>
+                </ng-container>
+
+                <!-- Previous Terms -->
+                <ng-container *ngIf="categorizedTerms.previousTerms.length">
+                    <div class="flex sm:items-center mt-4">
+                        <h3 class="text-lg text-gray-900">Previous Terms:</h3>
+                    </div>
+                    <ng-container *ngFor="let term of categorizedTerms.previousTerms">
+                        <div class="flex sm:items-center mt-2">
+                            <mat-icon [svgIcon]="'heroicons_outline:calendar'"></mat-icon>
+                            <div class="ml-6 leading-6">
+                                {{ term.from | date : dateFormat }} - {{ term.to | date : dateFormat }}
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+
+
+          <ng-container *ngIf="director.ids && director.ids.length">
+            <hr />
+
+            <div class="flex sm:items-center">
+              <h2 class="text-xl font-semibold text-primary">ID Cards</h2>
+            </div>
+
+
+              <mat-expansion-panel *ngFor="let idc of director?.ids" [expanded]="panelOpenState" (opened)="idCardPanelState = true"
+              (closed)="idCardPanelState = false" class="bg-winter-sky mt-6 py-3 specific-class">
+              <mat-expansion-panel-header class="bg-winter-sky specific-class">
+                  <mat-panel-title class="mr-0">
+                    <span [ngClass]="'fi fi-' + (idc?.coi || '') + ' mr-2 flag-icon'"></span>
+                    <h3 class="text-base-lg font-bold text-primary">{{ idc.type | titlecase }}</h3>
+                    <ng-container *ngIf="idc?.documents?.length">
+                      <button class="w-8 h-8 min-h-8" mat-icon-button matTooltip="Download"
+                        (click)="getDocumentDocument(idc)">
+                        <mat-icon class="icon-size-5 text-primary" [svgIcon]="'mat_solid:download'"></mat-icon>
+                      </button>
+                    </ng-container>  
+                    <mat-icon class="icon-size-5 font-bold text-black ml-auto"
+                          *ngIf="!idCardPanelState" [svgIcon]="'mat_solid:arrow_drop_down'"></mat-icon>
+                      <mat-icon class="icon-size-5 font-bold text-black ml-auto"
+                          *ngIf="idCardPanelState" [svgIcon]="'mat_solid:arrow_drop_up'"></mat-icon>
+                  </mat-panel-title>
+              </mat-expansion-panel-header>
+              <app-id-card-details [idc]="idc"></app-id-card-details>
+              </mat-expansion-panel>
+
+          </ng-container>
+
+          <ng-container *ngIf="director.assistant">
+            <hr />
+
+            <div class="flex sm:items-center">
+              <h2 class="text-xl font-semibold text-primary">Assistant</h2>
+            </div>
+
+            <div class="flex sm:items-center">
+              <mat-icon [svgIcon]="'heroicons_outline:user'"></mat-icon>
+              <div class="ml-2 leading-6">
+                {{ director?.assistant?.firstname }},
+                {{ director?.assistant?.lastname }}
+              </div>
+            </div>
+            <div class="flex">
+              <mat-icon [svgIcon]="'mat_outline:mail'"></mat-icon>
+              <div class="min-w-0 ml-2 space-y-1">
+                <div class="flex items-center leading-6">
+                  <a class="hover:underline" [href]="'mailto:' + director?.assistant?.email" target="_blank">
+                    {{ director?.assistant?.email }}
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="flex">
+              <mat-icon [svgIcon]="'heroicons_outline:phone'"></mat-icon>
+              <div class="min-w-0 ml-2 space-y-1">
+                <ng-container>
+                  <div *ngIf="director.assistant.mobile" class="flex items-center leading-6">
+                    {{ director?.assistant?.mobile }}
+                  </div>
+                  <div *ngIf="director.assistant.telephone" class="flex items-center leading-6">
+                    {{ director?.assistant?.telephone }}
+                  </div>
+                   <div *ngIf="director.assistant.fax" class="flex items-center leading-6">
+                    {{ director?.assistant?.fax }}
+                   </div>
+                </ng-container>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="editMode">
+    <!-- Header -->
+    <div class="
+        relative
+        w-full
+        h-30
+        px-8
+        sm:px-12
+        bg-white
+        dark:bg-accent-700
+      ">
+      <!-- Close button -->
+      <div class="flex items-center justify-end w-full max-w-3xl mx-auto pt-6">
+        <button mat-icon-button [matTooltip]="'Close'" [routerLink]="['../']">
+          <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Director form -->
+    <div class="relative flex flex-col flex-auto items-center px-6 sm:px-12">
+      <div class="w-full max-w-3xl">
+        <form [formGroup]="directorForm" (keydown.enter)="$event.preventDefault()">
+          <div class="flex flex-auto items-end -mt-16">
+            <div class="
+                flex
+                relative
+                items-center
+                justify-center
+              ">
+              <div class="
+                  w-32
+                  h-32
+                  relative
+                  rounded-full
+                  overflow-hidden
+                  ring-4 ring-bg-card
+                ">
+                <ng-container *ngIf="directorImg.files.length">
+                  <img [src]="fileUrl(directorImg)" />
+                </ng-container>
+
+                <ng-container *ngIf="directorProfileImage$ | async as profileImg">
+                  <img class="w-32 h-32" [src]="profileImg" />
+                </ng-container>
+
+                <div class="absolute inset-0 bg-opacity-50 z-10"></div>
+                <div class="absolute inset-0 flex items-center justify-center z-20"></div>
+                <div class="
+                    flex
+                    items-center
+                    justify-center
+                    w-full
+                    h-full
+                    rounded
+                    overflow-hidden
+                    uppercase
+                    text-8xl
+                    text-gray-900
+                    font-bold
+                    leading-none
+                    bg-gray-200
+                  ">
+                  {{ director.firstname?.charAt(0) + director.lastname?.charAt(0) }}
+                </div>
+              </div>
+
+              <ng-container *ngIf="!isNewDirector">
+                <button mat-mini-fab class="absolute bottom-0 right-0 z-20"
+                  (click)="$event.preventDefault(); directorImg.click()">
+                  <mat-icon [svgIcon]="'heroicons_solid:camera'"></mat-icon>
+                </button>
+              </ng-container>
+
+              <input #directorImg hidden type="file" name="director_img" id="director_img"
+                (change)="onProfileImageChange($event)" />
+
+              <input hidden [formControlName]="'picture'" />
+            </div>
+          </div>
+
+          <div class="grid mt-8 md:grid-cols-2 gap-x-4">
+              <mat-form-field>
+                <mat-label>Firstname</mat-label>
+                <input matInput [formControlName]="'firstname'" [placeholder]="'Name'" [spellcheck]="false"
+                  [required]="true" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Last Name</mat-label>
+                <input matInput [formControlName]="'lastname'" [placeholder]="'Name'" [spellcheck]="false"
+                  [required]="true" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Title</mat-label>
+                <mat-select [formControlName]="'title'">
+                  <mat-option *ngFor="let title of directorTitles" [value]="title">
+                    {{ title | titlecase }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Position</mat-label>
+                <input matInput [formControlName]="'position'" [placeholder]="'Position'" [spellcheck]="false" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Nationality</mat-label>
+                <mat-select [formControlName]="'citizenship'" multiple>
+                  <mat-option *ngFor="let country of countries" [value]="country.iso"
+                              [disabled]="isMaxSelected() && !isSelected(country.iso)">
+                    <span class="flex items-center">
+                      <span class="hidden sm:flex w-6 h-4 mr-1 overflow-hidden"
+                            [style.background]="
+                              'url(\'/assets/images/apps/contacts/flags.png\') no-repeat 0 0'"
+                            [style.backgroundSize]="'24px 3876px'"
+                            [style.backgroundPosition]="country.flagImagePos">
+                      </span>
+                      <span class="sm:mx-0.5 font-medium text-default">
+                        {{ country.name }}
+                      </span>
+                    </span>
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="directorForm.get('citizenship').hasError('maxSelection')">
+                  You can select up to three nationalities.
+                </mat-error>
+                <mat-icon matPrefix *ngIf="directorForm.get('citizenship').value.length > 0">
+                  <ng-container *ngFor="let iso of directorForm.get('citizenship').value">
+                    <span class="hidden sm:flex w-6 h-4 mr-1 overflow-hidden" [style.background]="
+                      'url(\'/assets/images/apps/contacts/flags.png\') no-repeat 0 0'"
+                      [style.backgroundSize]="'24px 3876px'" [style.backgroundPosition]="
+                      getCountryByIso(iso)?.flagImagePos">
+                    </span>
+                  </ng-container>
+                </mat-icon>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Class</mat-label>
+                <mat-select [formControlName]="'shareholding_class'" [required]="true">
+                  <mat-option *ngFor="let class of directorClasses" [value]="class.code">
+                    {{ class.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Type</mat-label>
+                <mat-select [formControlName]="'type'">
+                  <mat-option [value]="''"></mat-option>
+                  <mat-option *ngFor="let type of directorTypes" [value]="type">
+                    {{ type | titlecase }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Associated Director</mat-label>
+                <mat-select [formControlName]="'linked_director'">
+                  <mat-option [value]="''"></mat-option>
+                  <mat-option *ngFor="let director of getDirectorsExcludingSelected()" [value]="director.code">
+                    {{ director.firstname }}
+                    {{ director.lastname }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Language</mat-label>
+                <mat-select [formControlName]="'language'">
+                  <mat-option *ngFor="let language of directorLanguages" [value]="language.code">
+                    {{ language.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Institution</mat-label>
+                <input matInput [formControlName]="'institution'" [placeholder]="'Institution'" [spellcheck]="false" />
+              </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Hiring Date</mat-label>
+              <input matInput [matDatepicker]="hiringDatepicker" [formControlName]="'hiring_date'" [required]="true" />
+              <mat-datepicker-toggle matSuffix [for]="hiringDatepicker"></mat-datepicker-toggle>
+              <mat-datepicker #hiringDatepicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Status</mat-label>
+              <mat-select [formControlName]="'status'" [required]="true">
+                <mat-option *ngFor="let status of directorStatus" [value]="status">
+                  {{ status | titlecase }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div formArrayName="assignments" class="col-span-2">
+              <div *ngFor="let assignment of directorForm.get('assignments')['controls']; let i = index" [formGroupName]="i"
+                class="mt-4 flex gap-x-4 items-end">
+                <mat-form-field class="flex-1">
+                  <mat-label>Organization</mat-label>
+                  <mat-select formControlName="organizationCode" (selectionChange)="onOrgChange(i)">
+                    <mat-option *ngFor="let organization of organizations$ | async" [value]="organization.code">
+                      {{ organization.name }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+            
+                <mat-form-field class="flex-1">
+                  <mat-label>Committees</mat-label>
+                  <mat-select formControlName="committeeCodes" multiple>
+                    <mat-option *ngFor="let committee of committeeOptionsPerAssignment[i]" [value]="committee.code">
+                      {{ committee.name }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+            
+                <button class="self-center" mat-icon-button color="warn" type="button" (click)="removeAssignment(i)"
+                  aria-label="Remove Assignment">
+                  <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                </button>
+              </div>
+            
+              <div class="group inline-flex items-center -mt-2 -ml-4 py-2 px-4 rounded cursor-pointer" (click)="addAssignment()">
+                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                <span class="ml-2 font-medium text-secondary group-hover:underline">Add Assignment</span>
+              </div>
+            </div>
+
+        </div>
+
+          <div class="mt-4">
+            <ng-container *ngIf="director.shipping_address">
+              <div class="flex sm:items-center">
+                <mat-icon [svgIcon]="'heroicons_outline:home'"></mat-icon>
+                <div class="ml-2 leading-6">
+                  {{ director.shipping_address.line1 }},
+                  {{ director.shipping_address.city }} -
+                  {{ director.shipping_address.state }},
+                  {{ getCountryByIso(director.shipping_address.country).name }}
+                </div>
+              </div>
+            </ng-container>
+
+            <div class="group inline-flex items-center mt-2 -ml-4 py-2 px-4 rounded cursor-pointer"
+              (click)="alterShippingAddress()">
+              <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil'"></mat-icon>
+              <span class="ml-2 font-medium text-secondary group-hover:underline">
+                Edit Residential Address
+              </span>
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <ng-container *ngIf="director.billing_address">
+              <div class="flex sm:items-center">
+                <mat-icon [svgIcon]="'heroicons_outline:building-office'"></mat-icon>
+                <div class="ml-2 leading-6">
+                  {{ director.billing_address.line1 }},
+                  {{ director.billing_address.city }} -
+                  {{ director.billing_address.state }},
+                  {{ getCountryByIso(director.billing_address.country).name }}
+                </div>
+              </div>
+            </ng-container>
+
+            <div class="group inline-flex items-center mt-2 -ml-4 py-2 px-4 rounded cursor-pointer"
+              (click)="alterBillingAddress()">
+              <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil'"></mat-icon>
+              <span class="ml-2 font-medium text-secondary group-hover:underline">
+                Edit Work Address
+              </span>
+            </div>
+          </div>
+
+          <br /><br />
+          <mat-divider></mat-divider>
+
+          <div class="flex sm:items-center pt-6">
+            <h2 class="text-xl font-semibold text-primary">Contact</h2>
+          </div>
+
+          <div class="flex flex-col sm:flex-row justify-between mt-4">
+            <div class="w-full sm:w-1/2">
+              <mat-form-field class="use-mat-no-subscript w-full sm:w-11/12">
+                <mat-label>Telephone</mat-label>
+                <input matInput [formControlName]="'telephone'" />
+                <mat-select class="mr-1.5" [formControlName]="'phonePrefix'" matPrefix>
+                  <mat-select-trigger>
+                    <span class="flex items-center">
+                      <span class="hidden sm:flex w-6 h-4 mr-1 overflow-hidden"
+                            [style.background]="
+                              'url(\'/assets/images/apps/contacts/flags.png\') no-repeat 0 0'"
+                            [style.backgroundSize]="'24px 3876px'"
+                            [style.backgroundPosition]="getCountryByCode(directorForm.get('phonePrefix').value).flagImagePos">
+                      </span>
+                      <span class="sm:mx-0.5 font-medium text-default">
+                        {{ getCountryByCode(directorForm.get('phonePrefix').value).code }}
+                      </span>
+                    </span>
+                  </mat-select-trigger>
+                  <mat-option *ngFor="let country of countries; trackBy: trackByFn" [value]="country.code">
+                    <span class="flex items-center">
+                      <span class="w-6 h-4 overflow-hidden"
+                            [style.background]="
+                              'url(\'/assets/images/apps/contacts/flags.png\') no-repeat 0 0'"
+                            [style.backgroundSize]="'24px 3876px'"
+                            [style.backgroundPosition]="country.flagImagePos">
+                      </span>
+                      <span class="ml-2">{{ country.name }}</span>
+                      <span class="ml-2 font-medium">{{ country.code }}</span>
+                    </span>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="w-full sm:w-1/2 flex justify-end">
+              <mat-form-field class="use-mat-no-subscript w-full sm:w-11/12">
+                <mat-label>Mobile</mat-label>
+                <input matInput [formControlName]="'mobile'" />
+                <mat-select class="mr-1.5" [formControlName]="'mobilePrefix'" matPrefix>
+                  <mat-select-trigger>
+                    <span class="flex items-center">
+                      <span class="hidden sm:flex w-6 h-4 mr-1 overflow-hidden"
+                            [style.background]="
+                              'url(\'/assets/images/apps/contacts/flags.png\') no-repeat 0 0'"
+                            [style.backgroundSize]="'24px 3876px'"
+                            [style.backgroundPosition]="getCountryByCode(directorForm.get('mobilePrefix').value).flagImagePos">
+                      </span>
+                      <span class="sm:mx-0.5 font-medium text-default">
+                        {{ getCountryByCode(directorForm.get('mobilePrefix').value).code }}
+                      </span>
+                    </span>
+                  </mat-select-trigger>
+                  <mat-option *ngFor="let country of countries; trackBy: trackByFn" [value]="country.code">
+                    <span class="flex items-center">
+                      <span class="w-6 h-4 overflow-hidden"
+                            [style.background]="
+                              'url(\'/assets/images/apps/contacts/flags.png\') no-repeat 0 0'"
+                            [style.backgroundSize]="'24px 3876px'"
+                            [style.backgroundPosition]="country.flagImagePos">
+                      </span>
+                      <span class="ml-2">{{ country.name }}</span>
+                      <span class="ml-2 font-medium">{{ country.code }}</span>
+                    </span>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="mt-1">
+            <mat-form-field class="use-mat-no-subscript w-full">
+              <mat-label>Fax</mat-label>
+              <input matInput [formControlName]="'fax'" />
+              <mat-select class="mr-1.5" [formControlName]="'faxPrefix'" matPrefix>
+                <mat-select-trigger>
+                  <span class="flex items-center">
+                    <span class="hidden sm:flex w-6 h-4 mr-1 overflow-hidden" [style.background]="
+                        'url(\'/assets/images/apps/contacts/flags.png\') no-repeat 0 0'
+                      " [style.backgroundSize]="'24px 3876px'" [style.backgroundPosition]="
+                        getCountryByCode(directorForm.get('faxPrefix').value)
+                          .flagImagePos
+                      "></span>
+                    <span class="sm:mx-0.5 font-medium text-default">{{
+                      getCountryByCode(directorForm.get("faxPrefix").value).code
+                      }}</span>
+                  </span>
+                </mat-select-trigger>
+                <mat-option *ngFor="let country of countries; trackBy: trackByFn" [value]="country.code">
+                  <span class="flex items-center">
+                    <span class="w-6 h-4 overflow-hidden" [style.background]="
+                        'url(\'/assets/images/apps/contacts/flags.png\') no-repeat 0 0'
+                      " [style.backgroundSize]="'24px 3876px'"
+                      [style.backgroundPosition]="country.flagImagePos"></span>
+                    <span class="ml-2">{{ country.name }}</span>
+                    <span class="ml-2 font-medium">{{ country.code }}</span>
+                  </span>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="mt-1 w-full">
+            <mat-form-field class="use-mat-no-subscript w-full">
+              <mat-label>Email</mat-label>
+              <input matInput [formControlName]="'email'" [placeholder]="'Email'" [spellcheck]="false" />
+            </mat-form-field>
+          </div>
+          <div class="mt-1 w-full">
+            <mat-form-field class="use-mat-no-subscript w-full">
+              <mat-label>Secondary Email</mat-label>
+              <input matInput [formControlName]="'email2'" [placeholder]="'Secondary Email'" [spellcheck]="false" />
+            </mat-form-field>
+          </div>
+
+
+          <ng-container *ngIf="!isNewDirector">
+            <br />
+            <mat-divider></mat-divider>
+
+            <div class="flex sm:items-center pt-6">
+              <h2 class="text-xl font-semibold text-primary">Terms</h2>
+            </div>
+
+            <div class="mt-8">
+              <div class="space-y-4">
+                <ng-container *ngFor="
+                    let term of directorForm.get('terms').value;
+                    let i = index;
+                    let first = first;
+                    let last = last;
+                    trackBy: trackByFn
+                  ">
+                  <div class="flex">
+                    <div class="flex sm:items-center">
+                      <mat-icon [svgIcon]="'heroicons_outline:calendar'"></mat-icon>
+                      <div class="ml-2 leading-6">
+                        {{ term.from | date : 'MMMM y' }} - {{ term.to | date : 'MMMM y' }}
+                      </div>
+                    </div>
+
+                    <div class="flex items-center w-10 pl-2">
+                      <button class="w-8 h-8 min-h-8" mat-icon-button matTooltip="Remove" (click)="removeTermField(i)">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+
+              <div class="
+                  group
+                  inline-flex
+                  items-center
+                  mt-2
+                  -ml-4
+                  py-2
+                  px-4
+                  rounded
+                  cursor-pointer
+                " (click)="addTermField()">
+                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                <span class="ml-2 font-medium text-secondary group-hover:underline">Add term</span>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="!isNewDirector">
+            <br /><br />
+            <mat-divider></mat-divider>
+
+            <div class="flex sm:items-center pt-6">
+              <h2 class="text-xl font-semibold text-primary">ID Cards</h2>
+            </div>
+
+            <div class="mt-8">
+              <div class="space-y-4">
+                <ng-container *ngFor="
+                    let id of directorForm.get('ids').value;
+                    let i = index;
+                    let first = first;
+                    let last = last;
+                    trackBy: trackByFn
+                  ">
+                  <div class="flex">
+                    <ng-container *ngIf="id">
+                      <div class="flex sm:items-center">
+                        <span [ngClass]="'fi fi-' + (id?.coi || '') + ' mr-2 flag-icon'"></span>
+                        <div class="leading-6">
+                          {{ id.type | titlecase }},
+                          {{ id.exp | date : 'MMMM y' }}
+                        </div>
+                      </div>
+                    </ng-container>
+
+                    <ng-container>
+                      <div class="flex items-center w-10 pl-2">
+                        <button class="w-8 h-8 min-h-8" mat-icon-button matTooltip="Edit"
+                          (click)="editDocumentField(i)">
+                          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil'"></mat-icon>
+                        </button>
+
+                        <button class="w-8 h-8 min-h-8" mat-icon-button matTooltip="Upload"
+                          (click)="addDocumentDocumentField(i)">
+                          <mat-icon class="icon-size-5" [svgIcon]="'mat_solid:upload'"></mat-icon>
+                        </button>
+
+                        <button class="w-8 h-8 min-h-8" mat-icon-button (click)="removeDocumentField(i)"
+                          matTooltip="Remove">
+                          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                        </button>
+                      </div>
+                    </ng-container>
+                  </div>
+                </ng-container>
+              </div>
+              <div class="
+                  group
+                  inline-flex
+                  items-center
+                  mt-2
+                  -ml-4
+                  py-2
+                  px-4
+                  rounded
+                  cursor-pointer
+                " (click)="addDocumentField()">
+                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                <span class="ml-2 font-medium text-secondary group-hover:underline">Add document</span>
+              </div>
+            </div>
+          </ng-container>
+
+          <br />
+          <mat-divider *ngIf="!isNewDirector"></mat-divider>
+
+          <ng-container *ngIf="!isNewDirector">
+
+            <div class="flex sm:items-center pt-6">
+              <h2 class="text-xl font-semibold text-primary">Account Details</h2>
+            </div>
+
+            <div class="mt-8">
+              <div class="space-y-4">
+                <ng-container *ngFor="
+                    let bank_detail of directorForm.get('bank_details').value;
+                    let i = index;
+                    trackBy: trackByFn
+                  ">
+                  <div class="flex">
+                    <ng-container *ngIf="bank_detail">
+                      <div class="flex sm:items-center">
+                        <mat-icon [svgIcon]="'mat_solid:account_balance'"></mat-icon>
+                        <div class="ml-2 leading-6">
+                          {{ bank_detail.bank_name}},
+                        </div>
+                      </div>
+                    </ng-container>
+
+                    <ng-container>
+                      <div class="flex items-center w-10 pl-2">
+                        <button class="w-8 h-8 min-h-8" mat-icon-button matTooltip="Edit"
+                          (click)="editBankDetailsField(i)">
+                          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil'"></mat-icon>
+                        </button>
+
+                        <button class="w-8 h-8 min-h-8" mat-icon-button (click)="removeBankDetailsField(i)"
+                          matTooltip="Remove">
+                          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                        </button>
+                      </div>
+                    </ng-container>
+                  </div>
+                </ng-container>
+              </div>
+              <div class="group inline-flex items-center mt-2 -ml-4 py-2 px-4 rounded cursor-pointer
+                " (click)="addBankDetailsField()">
+                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                <span class="ml-2 font-medium text-secondary group-hover:underline">Add Account Details</span>
+              </div>
+            </div>
+          </ng-container>
+
+          <mat-divider class="mt-6"></mat-divider>
+
+          <div class="flex sm:items-center pt-6">
+            <h2 class="text-xl font-semibold text-primary">Assistant</h2>
+          </div>
+
+          <div class="mt-8">
+            <ng-container *ngIf="director.assistant">
+              <div class="flex sm:items-center">
+                <mat-icon [svgIcon]="'heroicons_outline:user'"></mat-icon>
+                <div class="ml-2 leading-6">
+                  {{ director?.assistant?.firstname }}
+                  {{ director?.assistant?.lastname }} -
+                  {{ director?.assistant?.email }}
+                </div>
+              </div>
+              <div class="flex">
+                <mat-icon [svgIcon]="'heroicons_outline:phone'"></mat-icon>
+                <div class="min-w-0 ml-6 space-y-1">
+                  <ng-container>
+                    <div *ngIf="director.assistant.mobile" class="flex items-center leading-6">
+                      <div class="font-mono">{{ director.assistant.mobile }}</div>
+                    </div>
+                    <div *ngIf="director.assistant.telephone" class="flex items-center leading-6">
+                      <div class="font-mono">{{ director.assistant.telephone }}</div>
+                    </div>
+                    <div *ngIf="director.assistant.fax" class="flex items-center leading-6">
+                      <div class="font-mono">{{ director.assistant.fax }}</div>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
+
+
+
+
+            <div class="
+                group
+                inline-flex
+                items-center
+                mt-2
+                -ml-4
+                py-2
+                px-4
+                rounded
+                cursor-pointer
+              " (click)="alterAssistant()">
+              <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil'"></mat-icon>
+              <span class="ml-2 font-medium text-secondary group-hover:underline">Edit Assistant</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="
+              flex
+              items-center
+              mt-10
+              -mx-6
+              sm:-mx-12
+              py-4
+              pr-8
+              pl-6
+              sm:pr-12 sm:pl-10
+              border-t
+              bg-gray-50
+              dark:bg-transparent
+            ">
+            <!-- Delete -->
+            <button *ngIf="!isNewDirector" mat-button [color]="'warn'" [matTooltip]="'Archive'"
+              (click)="deleteDirector()">
+              Archive
+            </button>
+            <!-- Cancel -->
+            <button class="ml-auto" mat-button [matTooltip]="'Cancel'" (click)="toggleEditMode()">
+              Cancel
+            </button>
+            <!-- Save -->
+            <button class="ml-2 text-white" mat-flat-button [color]="'primary'"
+              [disabled]="directorForm.invalid" [matTooltip]="'Save'"
+              (click)="updateDirector()">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-container>
+</div>

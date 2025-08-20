@@ -1,0 +1,43 @@
+/* ----------------------------------------------------------------------------------------------------- */
+/*  @ Import/write your custom styles here.
+/*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
+/* ----------------------------------------------------------------------------------------------------- */
+@import 'ngx-toastr/toastr';
+@font-face {
+    font-family: 'Soleto';
+    src:
+        url('/assets/fonts/soleto/Soleto-Regular.woff2') format('woff2'),
+        url('/assets/fonts/soleto/Soleto-Regular.woff') format('woff'),
+        url('/assets/fonts/soleto/Soleto-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Soleto Bold';
+    src:
+        url('/assets/fonts/soleto/Soleto-Bold.woff2') format('woff2'),
+        url('/assets/fonts/soleto/Soleto-Bold.woff') format('woff'),
+        url('/assets/fonts/soleto/Soleto-Bold.ttf') format('truetype');
+}
+
+* {
+    font-family: 'Soleto', 'Arial', sans-serif;
+}
+
+.font-bold {
+    font-family: 'Soleto Bold', 'Arial', sans-serif;  
+}
+
+.toast-success {
+    background-color: #00736e !important;
+}
+
+button.mat-primary {
+    background-color: #00736e!important;
+    color: white!important;
+  }
+
+.flag-icon {
+    width: 24px;
+    height: 17px;
+    vertical-align: middle;
+  } 

@@ -1,0 +1,18 @@
+<div class="w-full">
+    <div class="flex flex-col gap-6 mt-6">
+        <div *ngFor="let trail of trails$ | async" class="bg-winter-sky p-5 rounded-lg shadow-md">
+            <div class="flex items-center mb-4 text-lg font-bold">
+                <mat-icon class="icon-size-6 text-primary" svgIcon="heroicons_solid:user"></mat-icon>
+                <h3 class="ml-2 mr-1 text-lg">{{ trail?.author }}</h3>
+                <span class="text-base">- {{ (trail?.action | titlecase) || '-' }}</span>
+            </div>
+
+            <div class="flex items-center">
+                <mat-icon class="icon-size-6" svgIcon="heroicons_outline:clock"></mat-icon>
+                <div class="ml-3 leading-6">
+                    <strong>Date & Time: </strong>{{ trail?.createdAt | date: 'MMM dd, yyyy, h:mm:ss a' || '-' }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+<div class="relative pt-8">
+  <div class="flex flex-col gap-4 h-full">
+    <div class="{{ generalScale }}-card-border card-border">
+      <fieldset
+        class="flex flex-col items-center justify-center gap-4 mx-auto pb-4 px-8"
+      >
+        <legend
+          class="legend inline-flex w-20 h-20 aspect-square text-lg mx-auto font-bold {{
+            generalScale
+          }}-darker-bg rounded-full overflow-hidden aspect-square text-white justify-center items-center"
+        >
+          {{ isAvailable ? lastValue + "%" : "" }}
+        </legend>
+        <div
+          class="flex flex-col items-center justify-center gap-4 mx-auto"
+          *ngIf="isAvailable; else noData"
+        >
+          <app-chart
+            [data]="data"
+            [id]="id"
+            [scale]="scale"
+            [generalScale]="generalScale"
+          >
+          </app-chart>
+          <app-ratio [ratio]="ratio" [generalScale]="generalScale"> </app-ratio>
+        </div>
+        <ng-template #noData>
+          <app-risk-description
+            [title]="'bad'"
+            [header]="'No Data'"
+            class="w-[min-content]"
+          ></app-risk-description
+        ></ng-template>
+        <p
+          class="h-10 flex justify-center items-center leading-5 m-auto align-center text-center text-black font-semibold uppercase text-lg"
+        >
+          {{ title }}
+        </p>
+      </fieldset>
+    </div>
+    <button
+      [routerLink]="link"
+      data-html2canvas-ignore
+      class="h-fit w-11/12 text-lg p-3 hover:text-risk-btn text-white border-2 border-risk-btn bg-risk-btn hover:bg-white rounded-lg mx-auto transition"
+    >
+      Show
+    </button>
+  </div>
+</div>

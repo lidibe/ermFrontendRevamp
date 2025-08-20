@@ -1,0 +1,83 @@
+<div
+  class="relative h-full grid lg:grid-cols-3 lg:col-span-2 shadow-md p-8 gap-8 border-2 rounded-md"
+>
+  <div class="pt-8 col-span-2">
+    <div
+      class="{{
+        generalScale
+      }}-card-border flex card-border flex-col items-center justify-center gap-4 lg:w-3/4 mx-auto"
+    >
+      <fieldset
+        class="w-full relative mx-auto pb-4 px-4 md:px-12 flex flex-col items-stretch justify-center gap-6 text-center"
+      >
+        <legend
+          class="legend inline-flex w-20 h-20 mx-auto p-2 {{
+            generalScale
+          }}-darker-bg rounded-full aspect-square justify-center items-center"
+        >
+          <img
+            src="assets/icons/risk/up.svg"
+            class="border-2 border-white rounded-full p-2"
+            alt="scale"
+            object-fit="contain"
+          />
+        </legend>
+        <div
+          class="flex flex-col items-center justify-center gap-4 mx-auto"
+          *ngIf="isAvailable; else noData"
+        >
+          <app-sunburst
+            [data]="data"
+            [ratio]="ratio"
+            [generalScale]="generalScale"
+            class="m-auto text-center aspect-square"
+          ></app-sunburst>
+          <app-ratio [ratio]="ratio" [generalScale]="generalScale"> </app-ratio>
+        </div>
+        <ng-template #noData>
+          <app-risk-description
+            [title]="'bad'"
+            [header]="'No Data'"
+          ></app-risk-description
+        ></ng-template>
+        <p class="text-black font-semibold uppercase text-lg">
+          {{ month }} {{ year }}<br />
+          overall score
+        </p>
+      </fieldset>
+    </div>
+  </div>
+  <div class="inline-flex flex-row items-end lg:justify-end gap-4">
+    <div class="inline-flex flex-row gap-4 items-center">
+      <div class="inline-flex flex-col gap-4 items-center">
+        <div
+          class="w-10 aspect-square rounded-full bad-darker-bg"
+          [ngClass]="(!isAvailable || generalScale !== 'bad') && 'opacity-20'"
+        ></div>
+        <div
+          class="w-10 aspect-square rounded-full neutral-darker-bg"
+          [ngClass]="
+            (!isAvailable || generalScale !== 'neutral') && 'opacity-20'
+          "
+        ></div>
+        <div
+          class="w-10 aspect-square rounded-full good-darker-bg"
+          [ngClass]="(!isAvailable || generalScale !== 'good') && 'opacity-20'"
+        ></div>
+      </div>
+      <span
+        class="{{
+          generalScale
+        }}-text text-xl font-bold h-10 inline-flex items-center "
+        [ngClass]="
+          generalScale === 'good'
+            ? 'mt-auto'
+            : generalScale === 'bad'
+            ? 'mb-auto'
+            : 'my-auto'
+        "
+        >{{ isAvailable ? lastValue + "%" : "" }}</span
+      >
+    </div>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<app-dialog-container (onCloseDialog)="closeDialog()" title="Address">
+  <form *ngIf="data" [formGroup]="form" (submit)="onSubmit()">
+    <div>
+      <mat-form-field class="use-mat-no-subscript w-full">
+        <mat-label>Line 1</mat-label>
+        <input matInput [formControlName]="'line1'" [placeholder]="'Line 1'" [spellcheck]="false" [required]="true" />
+      </mat-form-field>
+    </div>
+    <div class="mt-1">
+      <mat-form-field class="use-mat-no-subscript w-full">
+        <mat-label>Line 2</mat-label>
+        <input matInput [formControlName]="'line2'" [placeholder]="'Line 2'" [spellcheck]="false" />
+      </mat-form-field>
+    </div>
+    <div class="mt-1">
+      <mat-form-field class="use-mat-no-subscript w-full">
+        <mat-label>Line 3</mat-label>
+        <input matInput [formControlName]="'line3'" [placeholder]="'Line 3'" [spellcheck]="false" />
+      </mat-form-field>
+    </div>
+
+    <div class="flex flex-wrap -mx-2 mt-1">
+      <div class="w-full md:w-1/2 px-2">
+        <mat-form-field class="use-mat-no-subscript w-full">
+          <mat-label>Country</mat-label>
+          <mat-select [formControlName]="'country'" [required]="true">
+            <mat-option *ngFor="let country of countries" [value]="country.iso">
+              <span class="flex items-center">
+                <span class="hidden sm:flex w-6 h-4 mr-1 overflow-hidden" [style.background]="
+                    'url(\'/assets/images/apps/contacts/flags.png\') no-repeat 0 0'
+                  " [style.backgroundSize]="'24px 3876px'" [style.backgroundPosition]="country.flagImagePos"></span>
+                <span class="sm:mx-0.5 font-medium text-default">
+                  {{ country.name }}
+                </span>
+              </span>
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix *ngIf="form.get('country').value">
+            <span class="hidden sm:flex w-6 h-4 mr-1 overflow-hidden" [style.background]="
+                'url(\'/assets/images/apps/contacts/flags.png\') no-repeat 0 0'
+              " [style.backgroundSize]="'24px 3876px'" [style.backgroundPosition]="
+              getCountryByIso(form.get('country').value)
+                  .flagImagePos
+              "></span>
+          </mat-icon>
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/2 px-2 flex justify-end">
+        <mat-form-field class="use-mat-no-subscript w-full">
+          <mat-label>City</mat-label>
+          <input (click)="initFilteredCititesCopy()" type="text" matInput [matAutocomplete]="autoCity" [formControlName]="'city'" [placeholder]="'City'" [spellcheck]="false" [required]="true" />
+          <mat-autocomplete #autoCity="matAutocomplete" [displayWith]="displayCompany">
+              <mat-option *ngFor="let city of filteredCititesCopy" [value]="city.name">
+                  {{ city?.name }}
+              </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap -mx-2 mt-1">
+      <div class="w-full md:w-1/2 px-2">
+        <mat-form-field class="use-mat-no-subscript w-full">
+          <mat-label>Postal Code</mat-label>
+          <input matInput [formControlName]="'postcode'" [placeholder]="'Postal Code'" [spellcheck]="false" />
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/2 px-2 flex justify-end">
+        <mat-form-field class="use-mat-no-subscript w-full">
+          <mat-label>State</mat-label>
+          <input matInput [formControlName]="'state'" [placeholder]="'State'" [spellcheck]="false" />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="flex justify-between mt-4 sm:mt-6">
+      <button mat-flat-button (click)="closeDialog()">Cancel</button>
+      <button mat-flat-button [color]="'primary'" [disabled]="form.invalid">
+        Save
+      </button>
+    </div>
+  </form>
+</app-dialog-container>

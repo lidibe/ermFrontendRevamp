@@ -1,0 +1,89 @@
+<div class="flex flex-col max-w-240 md:min-w-160 -m-6">
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg">{{title}}</div>
+        <button
+                mat-icon-button
+                [tabIndex]="-1" (click)="closeDialog()">
+            <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+
+    <form [formGroup]="form"
+            class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto">
+
+        <mat-form-field class="w-full">
+            <mat-label>Key Risk Indicator</mat-label>
+            <mat-select formControlName="kri_id" required>
+                <mat-option *ngFor="let item of kris" [value]="item.id">
+                    {{item.name}}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('kri_id').hasError('required')">Field Required</mat-error>
+        </mat-form-field>
+
+        <div class="w-full">
+            <mat-form-field class="w-1/2 pr-6">
+                <mat-label>Month</mat-label>
+                <mat-select formControlName="month" required>
+                    <mat-option *ngFor="let item of months" [value]="item.id">
+                        {{item.value}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('month').hasError('required')">Field Required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-1/2 pl-6">
+                <mat-label>Year</mat-label>
+                <mat-select formControlName="year" required>
+                    <mat-option *ngFor="let item of years" [value]="item">
+                        {{item}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('year').hasError('required')">Field Required</mat-error>
+            </mat-form-field>
+        </div>
+
+        <mat-form-field class="w-full">
+            <mat-label>bau</mat-label>
+            <input type="number" matInput formControlName="bau" required>
+            <mat-error *ngIf="form.get('bau').hasError('required')">Field Required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-full">
+            <mat-label>trigger</mat-label>
+            <input matInput formControlName="trigger" required>
+            <mat-error *ngIf="form.get('bau').hasError('required')">Field Required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-full">
+            <mat-label>limit</mat-label>
+            <input type="number" matInput formControlName="rlimit" required>
+            <mat-error *ngIf="form.get('rlimit').hasError('required')">Field Required</mat-error>
+        </mat-form-field>
+
+        <!-- Body -->
+        <quill-editor
+                class="mt-2"
+                formControlName="description"
+                [modules]="quillModules"></quill-editor>
+
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mt-4 sm:mt-6">
+            <div class="-ml-2">
+
+            </div>
+
+            <div class="flex items-center mt-4 sm:mt-0">
+                <button
+                        class="order-first sm:order-last"
+                        mat-flat-button
+                        [color]="'primary'"
+                        [disabled]="form.invalid" (click)="save()">
+                    Send
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

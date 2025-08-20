@@ -1,0 +1,322 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden bg-card dark:bg-transparent">
+
+  <fuse-alert
+    class="w-full flex pt-4 pr-16 pl-16"
+    *ngIf="showAlert"
+    [appearance]="'soft'"
+    [type]="alert.type"
+    [dismissible]="false">
+    {{ alert.message }}
+  </fuse-alert>
+
+  <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+    <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+      <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+    </div>
+
+    <div class="text-4xl font-extrabold tracking-tight">KRI Data</div>
+
+    <div class="flex flex-shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+      <mat-form-field class="min-w-50 w-80">
+        <mat-label>Key Risk Indicator</mat-label>
+        <mat-select class="mr-1.5" [(ngModel)]="query.kriId">
+          <mat-option *ngFor="let kri of kris;" [value]="kri.id">
+            {{kri.key}} - {{kri.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="min-w-50 pl-6">
+        <mat-label>Month</mat-label>
+        <mat-select class="mr-1.5" [(ngModel)]="query.month">
+          <mat-option *ngFor="let month of months;" [value]="month.id">
+            {{month.value}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="min-w-50 pl-6">
+        <mat-label>Year</mat-label>
+        <mat-select class="mr-1.5" [(ngModel)]="query.year">
+          <mat-option *ngFor="let year of years;" [value]="year">
+            {{year}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button
+        class="ml-4 mt-6"
+        mat-flat-button
+        [color]="'secondary'"
+        (click)="filterButtonPress.next(0)"
+        *ngIf="!filterEnabled">
+        <mat-icon [svgIcon]="'heroicons_outline:filter'"></mat-icon>
+      </button>
+
+      <button
+        class="ml-4 mt-6"
+        mat-flat-button
+        [color]="'warn'"
+        (click)="filterButtonPress.next(0)"
+        *ngIf="filterEnabled">
+        <mat-icon [svgIcon]="'heroicons_outline:filter'"></mat-icon>
+      </button>
+
+      <button
+        class="ml-4 mt-6"
+        mat-flat-button
+        [color]="'secondary'"
+        (click)="resetButtonPress.next(0)">
+        <mat-icon [svgIcon]="'heroicons_outline:receipt-refund'"></mat-icon>
+        <span class="ml-2 mr-1">Reset</span>
+      </button>
+
+      <button
+        class="ml-4 mt-6"
+        mat-flat-button
+        [color]="'primary'"
+        (click)="createKriData()">
+        <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+        <span class="ml-2 mr-1">Add</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="flex flex-auto overflow-hidden">
+    <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden">
+
+      <ng-container *ngIf="kriDatasCount > 0; else noKriData">
+
+        <div class="overflow-x-auto sm:overflow-y-auto" cdkScrollable>
+          <table
+            class="w-full min-w-320 table-fixed bg-transparent"
+            [ngClass]="{'pointer-events-none': isLoading}"
+            mat-table
+            matSort
+            [matSortActive]="'kriName'"
+            [matSortDisableClear]="true"
+            [matSortDirection]="'asc'"
+            [multiTemplateDataRows]="true"
+            [dataSource]="kriDatas$"
+            [trackBy]="trackByFn">
+
+            <ng-container matColumnDef="kriName">
+              <th
+                class="bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                disableClear>
+                KRI
+              </th>
+              <td class="pr-4 truncate" mat-cell *matCellDef="let item">
+                {{item.kriNum}} - {{item.kriName}}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="period">
+              <th
+                class="w-48 bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                disableClear>
+                Period
+              </th>
+              <td class="pr-4 truncate" mat-cell *matCellDef="let item">
+                {{ getDate(item.month, item.year) | date: 'MMMM YYYY'}}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="value">
+              <th
+                class="bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                disableClear>
+                Value
+              </th>
+              <td class="pr-4 truncate" mat-cell *matCellDef="let item">
+                <span *ngIf="item.nature === 'P'">{{item.value | percent :'1.2-2' }}</span>
+                <span *ngIf="item.nature === 'N'">{{item.value}}</span>
+                <span *ngIf="item.nature === 'N/A'">{{item.value | percent :'1.2-2' }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th
+                class="bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                disableClear>
+                Status
+              </th>
+              <td class="pr-4 truncate" mat-cell *matCellDef="let item">
+
+                <span *ngIf="item.kriNum === '1004'">
+                  <mat-icon class="mat-warn" svgIcon="heroicons_outline:emoji-happy" *ngIf="((item.value < item.bau) || (item.value >= item.rLimit))"></mat-icon>
+                  <mat-icon style="color: orange;" svgIcon="heroicons_outline:emoji-sad" *ngIf="((item.value >= item.triggerMin) && (item.value <= item.triggerMax))"></mat-icon>
+                  <mat-icon class="mat-primary" svgIcon="heroicons_outline:emoji-sad" *ngIf="((item.value > item.bau) && (item.value < item.triggerMin))"></mat-icon>
+                </span>
+
+                <span *ngIf="item.kriNum !== '1004'">
+                  <span *ngIf="item.rLimit <= item.bau">
+                    <mat-icon class="mat-primary" svgIcon="heroicons_outline:emoji-happy" *ngIf="item.value >= item.bau"></mat-icon>
+                    <mat-icon style="color: orange;" svgIcon="heroicons_outline:emoji-sad" *ngIf="((item.value < item.bau) && (item.value >= item.rLimit))"></mat-icon>
+                    <mat-icon class="mat-warn" svgIcon="heroicons_outline:emoji-sad" *ngIf="((item.value < item.bau) && (item.value < item.rLimit))"></mat-icon>
+                  </span>
+                  <span *ngIf="item.rLimit > item.bau">
+                    <mat-icon class="mat-primary" svgIcon="heroicons_outline:emoji-happy" *ngIf="item.value <= item.bau"></mat-icon>
+                    <mat-icon style="color: orange;" svgIcon="heroicons_outline:emoji-sad" *ngIf="((item.value > item.bau) && (item.value <= item.rLimit))"></mat-icon>
+                    <mat-icon class="mat-warn" svgIcon="heroicons_outline:emoji-sad" *ngIf="((item.value > item.bau) && (item.value > item.rLimit))"></mat-icon>
+                  </span>
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="details">
+              <th
+                class="w-24 pr-8 bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                mat-header-cell
+                *matHeaderCellDef>
+                Details
+              </th>
+              <td class="pr-8" mat-cell *matCellDef="let item">
+                <button
+                  class="min-w-10 min-h-7 h-7 px-2 leading-6"
+                  mat-stroked-button
+                  (click)="toggleDetails(item.id)">
+                  <mat-icon
+                    class="icon-size-5"
+                    [svgIcon]="selectedKriData?.id === item.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'"></mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="kriDetails">
+              <td
+                class="p-0 border-b-0"
+                mat-cell
+                *matCellDef="let item"
+                [attr.colspan]="columns.length">
+                <div class="shadow-lg overflow-hidden">
+                  <div class="flex border-b">
+                    <form class="flex flex-col w-full" [formGroup]="selectedKriDataForm">
+                      <div class="flex w-full">
+                        <div class="flex flex-auto pl-12 pt-12 pr-12 pb-12">
+
+                          <mat-form-field class="pr-6 w-1/6">
+                            <mat-label>Name</mat-label>
+                            <input matInput [formControlName]="'kriName'">
+                          </mat-form-field>
+
+                          <mat-form-field class="pr-6 w-1/6">
+                            <mat-label>Month</mat-label>
+                            <mat-select class="mr-1.5" [formControlName]="'month'">
+                              <mat-option *ngFor="let item of months; trackBy: trackByFn" [value]="item.id">
+                                {{item.value}}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+
+                          <mat-form-field class="pr-6 w-1/6">
+                            <mat-label>Year</mat-label>
+                            <mat-select class="mr-1.5" [formControlName]="'year'">
+                              <mat-option *ngFor="let item of years; trackBy: trackByFn" [value]="item">
+                                {{item}}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+
+                          <mat-form-field class="pr-6 w-1/6">
+                            <mat-label>BAU</mat-label>
+                            <input type="number" matInput [formControlName]="'bau'">
+                          </mat-form-field>
+
+                          <mat-form-field class="pr-6 w-1/6">
+                            <mat-label>Trigger</mat-label>
+                            <input matInput [formControlName]="'trigger'">
+                          </mat-form-field>
+
+                          <mat-form-field class="pr-6 w-1/6">
+                            <mat-label>Trigger Min</mat-label>
+                            <input matInput [formControlName]="'triggerMin'">
+                          </mat-form-field>
+
+                          <mat-form-field class="pr-6 w-1/6">
+                            <mat-label>Trigger Max</mat-label>
+                            <input matInput [formControlName]="'triggerMax'">
+                          </mat-form-field>
+
+                          <mat-form-field class="pr-6 w-1/6">
+                            <mat-label>Limit</mat-label>
+                            <input type="number" matInput [formControlName]="'rLimit'">
+                          </mat-form-field>
+
+                          <mat-form-field class="pr-6 w-1/6">
+                            <mat-label>Value</mat-label>
+                            <input type="number" matInput [formControlName]="'value'">
+                          </mat-form-field>
+
+                        </div>
+                      </div>
+
+                      <div class="flex items-center justify-between w-full border-t px-8 py-4">
+                        <button class="-ml-4" mat-button [color]="'warn'">
+                          Delete
+                        </button>
+                        <div class="flex items-center">
+                          <div class="flex items-center mr-4" *ngIf="flashMessage">
+                            <ng-container *ngIf="flashMessage === 'success'">
+                              <mat-icon class="text-green-500" [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                              <span class="ml-2">Data updated</span>
+                            </ng-container>
+                            <ng-container *ngIf="flashMessage === 'error'">
+                              <mat-icon class="text-red-500" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                              <span class="ml-2">An error occurred, try again!</span>
+                            </ng-container>
+                          </div>
+                          <button
+                            mat-flat-button
+                            [color]="'primary'"
+                            (click)="updateSelectedKriData()">
+                            Update
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr class="shadow" mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+            <tr class="h-18 hover:bg-hover" mat-row *matRowDef="let product; columns: columns;"></tr>
+            <tr class="h-0" mat-row *matRowDef="let row; columns: ['kriDetails']"></tr>
+          </table>
+        </div>
+
+        <mat-paginator
+          class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+          [ngClass]="{'pointer-events-none': isLoading}"
+          [length]="pagination.length"
+          [pageIndex]="pagination.page"
+          [pageSize]="pagination.size"
+          [pageSizeOptions]="[5, 10, 25, 100]"
+          [showFirstLastButtons]="true">
+        </mat-paginator>
+
+      </ng-container>
+
+      <ng-template #noKriData>
+        <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">
+          There are no risk data!
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,109 @@
+{
+  "name": "Afxm Ops Workflow Frontend",
+  "port": 9000,
+  "cluster": {
+    "workerCount": 1,
+    "accessKey": "k3ad8ca3112ma01-03832",
+    "json": true
+  },
+  "secret": "YOLO",
+  "domain": "afreximbank.net",
+  "log": {
+    "name": "Afxm Ops Workflow Frontend - log",
+    "level": "debug"
+  },
+  "corsWhitelist": [
+    "http://127.0.0.1:5000"
+  ],
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "db": 2,
+    "pass": ""
+  },
+
+  "csrf": {
+    "token": false,
+    "origin": false
+  },
+
+  "gateway": {
+    "url": "http://localhost:4000"
+  },
+
+  "oauth": {
+    "google": {
+      "clientId": "",
+      "clientSecret": "",
+      "developerKey": "",
+      "redirectUri": "",
+      "redirectPath": "/api/auth/google",
+      "endpoint": "https://accounts.google.com/o/oauth2/auth",
+      "tokenEndpoint": "https://accounts.google.com/o/oauth2/token"
+    },
+
+    "facebook": {
+      "clientId": "",
+      "clientSecret": "",
+      "redirectUri": "",
+      "redirectPath": "/api/auth/facebook",
+      "endpoint": "https://www.facebook.com/v2.1/dialog/oauth",
+      "tokenEndpoint": "https://graph.facebook.com/oauth/access_token"
+    },
+
+    "flickr": {
+      "clientId": "",
+      "clientSecret": "",
+      "authorize": "https://www.flickr.com/services/oauth/authorize",
+      "endpoint": "https://www.flickr.com/services/oauth/request_token",
+      "tokenEndpoint": "https://www.flickr.com/services/oauth/access_token",
+      "restEndpoint": "https://api.flickr.com/services/rest"
+    },
+
+    "instagram": {
+      "clientId": "",
+      "clientSecret": "",
+      "redirectUri": ""
+    }
+  },
+
+  "dropbox": {
+    "appKeyId": ""
+  },
+
+  "customise": {
+    "instagramClientId": "",
+    "facebookAppId": ""
+  },
+
+  "cache": {
+    "defaultExpiration": 300,
+    "http": 300
+  },
+
+  "sessionLifetime": 3600000,
+  "session": {
+    "ipCheck": false,
+    "secret": "Mikeslakej135hlkd83",
+    "id": "sid",
+    "uaCheck": false
+  },
+
+  "aws": {
+    "key":"",
+    "secret": "",
+    "enabled": false
+  },
+
+  "flags": {
+    "ccNameLocked": false,
+    "readableUrls": false,
+    "translateReadableUrls": false,
+    "i18n": true,
+    "i18nsync": false,
+    "i18ndownsync": false,
+    "18nshow": false,
+    "domaincookie": false,
+    "optimizely": false
+  }
+}

@@ -1,0 +1,136 @@
+<div
+  #parent
+  id="parent"
+  role="main"
+  class="container my-16 mx-4 md:mx-8 flex flex-col gap-4"
+>
+  <div class="flex flex-col gap-6">
+    <div class="mb-6">
+      <h2
+        class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 md:leading-10 truncate"
+      >
+        ERM Dashboard
+      </h2>
+    </div>
+    <section class="w-full grid grid-cols-3 gap-4">
+      <div class="">
+        <button
+          class="h-6 min-h-6 px-2 bg-hover"
+          mat-button
+          [matMenuTriggerFor]="monthMenu"
+        >
+          <span class="font-medium text-sm text-secondary">{{
+            monthLabel
+          }}</span>
+        </button>
+        <mat-menu #monthMenu="matMenu">
+          <span *ngFor="let month of months">
+            <button mat-menu-item (click)="setMonth(month.id, month.label)">
+              {{ month.label }}
+            </button>
+          </span>
+        </mat-menu>
+      </div>
+      <div class="">
+        <button
+          class="h-6 min-h-6 px-2 bg-hover"
+          mat-button
+          [matMenuTriggerFor]="yearMenu"
+        >
+          <span class="font-medium text-sm text-secondary">{{ year }}</span>
+        </button>
+        <mat-menu #yearMenu="matMenu">
+          <span *ngFor="let year of years">
+            <button mat-menu-item (click)="setYear(year)">
+              {{ year }}
+            </button>
+          </span>
+        </mat-menu>
+      </div>
+    </section>
+    <section class="w-full grid lg:grid-cols-3 gap-4 items-center">
+      <app-title class="col-span-full">Overall</app-title>
+      <app-genral-risk-card
+        [month]="monthLabel"
+        [year]="year"
+        [data]="riskData?.overall"
+        class="md:col-span-2 h-full"
+      ></app-genral-risk-card>
+      <div
+        class="shadow-md border-2 rounded-md flex flex-col gap-6 align-center h-full w-full p-6 align-center"
+      >
+        <div
+          class="inline-flex flex-nowrap items-center justify-start md:gap-2"
+        >
+          <!--span class="text-xl font-semibold break">Data From</span-->
+          <div
+            class="inline-flex gap-2 border border-indigo-200 rounded-md p-2"
+          >
+            <span class="rounded-md p-2 bg-indigo-100">
+              {{ monthLabel }}
+            </span>
+            <span class="rounded-md p-2 bg-indigo-100">
+              {{ year }}
+            </span>
+          </div>
+        </div>
+        <div>
+          <ng-container *ngIf="showOverallComments; else noOverallComments">
+            <treo-alert
+              [appearance]="'outline'"
+              [type]="'accent'"
+              [showIcon]="false"
+            >
+              <span [innerHTML]="overallComments"></span>
+            </treo-alert>
+          </ng-container>
+          <ng-template #noOverallComments>
+            <div
+              class="p-8 sm:p-16 text-4xl font-semibold tracking-tight text-center capitalize"
+            >
+              There is no data!
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </section>
+    <section class="w-full flex flex-col gap-4">
+      <app-title class="">Risks Types</app-title>
+      <div
+        class="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+      >
+        <div
+          *ngFor="let risk of riskData?.reportInfo"
+          class="h-full w-full relative m-auto"
+        >
+          <app-card
+            [id]="risk.id"
+            [title]="risk.name"
+            [link]="risk.link"
+            [currentData]="risk.currentData"
+            [data]="risk.value || []"
+          ></app-card>
+        </div>
+      </div>
+    </section>
+    <section class="w-full flex flex-col gap-4">
+      <app-title [bullet]="true">Key Index</app-title>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <app-risk-description
+          *ngFor="let el of descData"
+          [title]="el.title"
+          [header]="el.header"
+          [para]="el.desc"
+        ></app-risk-description>
+      </div>
+      <div data-html2canvas-ignore class="self-end">
+        <button
+          (click)="print()"
+          class="h-full text-lg p-3 px-18 hover:text-risk-btn text-white border-2 border-risk-btn bg-risk-btn hover:bg-white rounded-lg mx-auto transition"
+        >
+          Generate PDF
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

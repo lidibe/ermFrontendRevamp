@@ -1,0 +1,22 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="flex sm:items-center">
+        <mat-icon class="text-primary" [svgIcon]="'heroicons_outline:document-text'"></mat-icon>
+        <div class="ml-2 leading-6"><strong>#: </strong>{{ idc?.num || '-' }}</div>
+    </div>
+    <div class="flex sm:items-center">
+        <mat-icon class="icon-size-6 text-primary" svgIcon="heroicons_solid:calendar-days"></mat-icon>
+        <div class="ml-2 leading-6"><strong>Birthday: </strong>{{ (idc?.dob | date: "MMM dd, yyyy") || '-' }}</div>
+    </div>
+    <div class="flex sm:items-center">
+        <mat-icon class="icon-size-6 text-primary" svgIcon="heroicons_solid:calendar-days"></mat-icon>
+        <div class="ml-2 leading-6"><strong>Issuance Date: </strong>{{ (idc?.doi | date: "MMM dd, yyyy") || '-' }}</div>
+    </div>
+    <div class="flex sm:items-center">
+        <mat-icon class="icon-size-6 text-primary" svgIcon="heroicons_solid:calendar-days"></mat-icon>
+        <div class="ml-2 leading-6"><strong>Expiration Date: </strong>{{ (idc?.exp | date: "MMM dd, yyyy") || '-' }}
+        </div>
+    </div>
+    <div class="flex sm:items-center">
+        <div class="leading-6"><strong>Authority:</strong> {{ idc?.authority }}</div>
+    </div>
+</div>

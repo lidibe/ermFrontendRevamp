@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+    tools {
+        nodejs '20'
+    }
+    environment {
+        PROJECT_NAME = "afxm-bose-app-frontend-rev"
+        version = "master"
+        BRANCH = "master"
+        SLACK_CHANNEL = 'afxm-pipelines'
+        SLACK_DOMAIN  = 'afb-it'
+        SLACK_CREDENTIALS = 'Slack1'
+        CHANGE_LIST = true
+        TEST_SUMMARY = true
+        registry = "378457291432.dkr.ecr.eu-west-1.amazonaws.com"
+        AWS_ACCOUNT_ID = '378457291432'
+        APPLICATION = "bose-app-frontend"
+        ENVIRONMENT_NAME = "afxm-bose-app-frontend-uat"
+        REGION = "eu-west-1"
+        ENC = ""
+        VERSION = "uat"
+        TIMESTAMP=java.time.LocalDateTime.now()
+    }
+    stages {
+        stage("Frontend App (Build)") {
+            steps {
+                slackSend (channel: 'afxm-pipelines',  color: '#0D76AD', message: ">>> ---------- Building the Frontend App Image -------------")
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    dir("${env.WORKSPACE}"){
+                        sh "pwd"
+                        sh "npm -v"
+                        sh "which npm"
+                        echo '>>> ---------- Start Building the Frontend App Image -------------'
+                        sh "CI=false npm i"
+                        sh "CI=false npm run build"
+                        sh "docker build -t ${PROJECT_NAME}:${VERSION} . "
+                        echo '<<< ---------- End Building the Frontend App Image -------------'
+                    }
+                }
+            }
+            post {
+                success {
+                    slackSend (channel: 'afxm-pipelines',  color: '#09580a', message: "<<< ---------- BUILD | Frontend App Image success -------------")
+                }
+                failure {
+                    slackSend (channel: 'afxm-pipelines',  color: '#d51400', message: "<<< ---------- BUILD | Frontend App Image failed -------------")
+                }
+            }
+        }
+        stage("Docker Push") {
+            steps {
+                sh "aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 378457291432.dkr.ecr.eu-west-1.amazonaws.com"
+                sh "docker tag ${PROJECT_NAME}:${VERSION} 378457291432.dkr.ecr.eu-west-1.amazonaws.com/${PROJECT_NAME}:${VERSION}"
+                sh "docker push 378457291432.dkr.ecr.eu-west-1.amazonaws.com/${PROJECT_NAME}:${VERSION}"
+            }
+        }
+    }
+}

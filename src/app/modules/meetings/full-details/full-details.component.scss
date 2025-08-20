@@ -1,0 +1,11 @@
+mat-expansion-panel {
+  .mat-expansion-indicator::after {
+    border-color: rgb(100, 116, 139);
+  }
+
+  mat-expansion-panel-header {
+    .mat-content {
+      overflow: visible;
+    }
+  }
+}

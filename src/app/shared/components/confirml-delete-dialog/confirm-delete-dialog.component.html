@@ -1,0 +1,13 @@
+<app-dialog-container (onCloseDialog)="closeDialog()" title="Confirm Archive">
+  <p class="text-lg">Are you sure you want to archive this <strong>{{origin}}</strong> ?</p>
+    <mat-divider class="mt-6 mb-3"></mat-divider>
+    <div class="
+        flex
+        items-center
+        justify-between">
+        <button type="button" (click)="onSubmit()" type="button"
+        class="bg-primary text-white border border-solid ml-auto py-2 px-5 text-base leading-5 font-medium" mat-button>
+        <span class="mr-2">Archive</span>
+        </button>
+    </div>
+</app-dialog-container>

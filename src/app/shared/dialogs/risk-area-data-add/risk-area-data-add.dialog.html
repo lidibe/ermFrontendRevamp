@@ -1,0 +1,103 @@
+<div class="flex flex-col max-w-240 md:min-w-160 -m-6">
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg">Add Risk Area Data</div>
+        <button
+                mat-icon-button
+                [tabIndex]="-1" (click)="closeDialog()">
+            <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+
+    <form [formGroup]="form"
+            class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto">
+
+        <mat-form-field class="w-full">
+            <mat-label>Risk Type</mat-label>
+            <mat-select formControlName="riskAreaId" required>
+                <mat-option *ngFor="let item of riskAreas" [value]="item.id">
+                    {{item.name}}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('riskAreaId').hasError('required')">Field Required</mat-error>
+        </mat-form-field>
+
+        <div class="w-full">
+            <mat-form-field class="w-1/2 pr-6">
+                <mat-label>Month</mat-label>
+                <mat-select formControlName="month" required>
+                    <mat-option *ngFor="let item of months" [value]="item.id">
+                        {{item.value}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('month').hasError('required')">Field Required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-1/2 pl-6">
+                <mat-label>Year</mat-label>
+                <mat-select formControlName="year" required>
+                    <mat-option *ngFor="let item of years" [value]="item">
+                        {{item}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('year').hasError('required')">Field Required</mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="w-full">
+            <mat-form-field class="w-1/2 pr-6">
+                <mat-label>Weight</mat-label>
+                <input type="number" matInput formControlName="weight" required>
+                <mat-error *ngIf="form.get('weight').hasError('required')">Field Required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-1/2 pl-6">
+                <mat-label>Quant. Weight</mat-label>
+                <input type="number" matInput formControlName="quantitativeWeight" required>
+                <mat-error *ngIf="form.get('quantitativeWeight').hasError('required')">Field Required</mat-error>
+            </mat-form-field>
+        </div>
+
+
+
+        <div class="w-full">
+            <mat-form-field class="w-1/2 pr-6">
+                <mat-label>Qual. weight</mat-label>
+                <input type="number" matInput formControlName="qualitativeWeight" required>
+                <mat-error *ngIf="form.get('qualitativeWeight').hasError('required')">Field Required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-1/2 pl-6">
+                <mat-label>Qualitative Score</mat-label>
+                <input type="number" matInput formControlName="qualitativeScore" required>
+                <mat-error *ngIf="form.get('qualitativeScore').hasError('required')">Field Required</mat-error>
+            </mat-form-field>
+        </div>
+
+
+        <!-- Body -->
+        <quill-editor
+                class="mt-2"
+                formControlName="description"
+                [modules]="quillModules"></quill-editor>
+        <!--mat-error *ngIf="form.get('reason').hasError('required')">Field Required</mat-error-->
+
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mt-4 sm:mt-6">
+            <div class="-ml-2">
+
+            </div>
+
+            <div class="flex items-center mt-4 sm:mt-0">
+                <button
+                        class="order-first sm:order-last"
+                        mat-flat-button
+                        [color]="'primary'"
+                        [disabled]="form.invalid" (click)="save()">
+                    Send
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,451 @@
+<div class="flex flex-col w-full">
+  <ng-container *ngIf="!editMode">
+    <div class="
+        relative
+        w-full
+        h-22
+        sm:h-28
+        px-8
+        sm:px-12
+        bg-white
+        dark:bg-accent-700
+      ">
+<!--       <div class="flex items-center justify-end w-full max-w-3xl mx-auto pt-6">
+        <button mat-icon-button [matTooltip]="'Close'" [routerLink]="['../']">
+          <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+        </button>
+      </div> -->
+    </div>
+
+    <div class="
+        relative
+        flex flex-col flex-auto
+        items-center
+        p-6
+        pt-0
+        sm:p-8 sm:pt-0
+      ">
+      <div class="w-full max-w-3xl -mt-16">
+
+          <div class="flex gap-2 items-center mb-1 justify-end">
+            <button class="-ml-3 mr-auto text-primary py-2 px-4 text-base leading-5 font-medium" [routerLink]="['../']" mat-flat-button>
+              <mat-icon class="icon-size-4" svgIcon="mat_solid:arrow_back_ios"></mat-icon> Back
+            </button>
+
+            <button *ngIf="meeting?.is_deleted" type="button" (click)="unArchiveMeeting()"
+            class="bg-teal-tranquility text-primary border border-solid flex-row-reverse py-2 px-5 text-base leading-5 font-medium" mat-button>
+            <mat-icon class="icon-size-5 text-primary" [svgIcon]="'mat_solid:settings_backup_restore'"></mat-icon>
+            <span class="mr-2">UnArchive</span>
+            </button>
+
+            <ng-container *ngIf="!meeting.is_deleted">
+            <button type="button" [routerLink]="['full']"
+            class="bg-teal-tranquility text-primary border border-solid flex-row-reverse py-2 px-5 text-base leading-5 font-medium" mat-button>
+            <mat-icon class="icon-size-5 text-primary" svgIcon="heroicons_solid:arrows-pointing-out"></mat-icon>
+            <span class="mr-2">Details</span>
+            </button>
+
+            <button type="button" (click)="toggleEditMode()"
+            class="bg-teal-tranquility text-primary border border-solid flex-row-reverse py-2 px-5 text-base leading-5 font-medium" mat-button>
+            <mat-icon class="icon-size-5 text-primary" [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
+            <span class="mr-2">Edit</span>
+            </button>
+
+            <button type="button" mat-button color="warn" (click)="deleteMeeting()"
+            class="bg-white border border-solid flex-row-reverse border-red-300 py-2 px-5 text-base leading-5 font-medium">
+            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:archive-box-x-mark'"></mat-icon>
+            <span class="mr-2">Archive</span>
+            </button>
+          </ng-container>
+        </div>
+        <div class="mt-6 text-center text-3xl border-t border-primary pt-3 font-bold truncate">
+          {{ meeting?.title || '-' }}
+        </div>
+
+        <div class="mt-4 pt-6 border-t border-primary">
+          <div class="bg-winter-sky rounded shadow grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+          <ng-container>
+            <div class="flex sm:items-center">
+              <mat-icon class="text-primary" [svgIcon]="'heroicons_outline:document-text'"></mat-icon>
+              <div class="ml-2 leading-6"><strong>#: </strong>{{ meeting?.name || '-' }}</div>
+            </div>
+          </ng-container>
+
+          <ng-container>
+            <div class="flex sm:items-center">
+              <mat-icon class="icon-size-6 text-primary" svgIcon="mat_outline:class"></mat-icon>
+              <div class="ml-2 leading-6 truncate"><strong>Type: </strong>{{ meeting?.type || '-' }}</div>
+            </div>
+          </ng-container>
+
+          <ng-container>
+            <div class="flex sm:items-center">
+              <mat-icon class="icon-size-6 text-primary" svgIcon="heroicons_solid:calendar-days"></mat-icon>
+              <div class="ml-2 leading-6"><strong>Start Date: </strong>{{ (meeting?.starting_at | date: "MMM dd, yyyy") || '-' }}</div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="meeting.ending_at">
+            <div class="flex sm:items-center">
+              <mat-icon class="icon-size-6 text-primary" svgIcon="heroicons_solid:calendar-days"></mat-icon>
+              <div class="ml-2 leading-6"><strong>End Date: </strong>{{ (meeting?.ending_at | date: "MMM dd, yyyy") || '-' }}</div>
+            </div>
+          </ng-container>
+
+          <div class="flex sm:items-center">
+            <mat-icon class="icon-size-6 text-primary" svgIcon="heroicons_solid:building-library"></mat-icon>
+            <div class="ml-2 leading-6 truncate"><strong>Organization: </strong>{{ meeting?.organization?.name || '-' }}</div>
+          </div>
+
+          <div class="flex sm:items-center">
+            <mat-icon class="icon-size-6 text-primary" svgIcon="heroicons_solid:briefcase"></mat-icon>
+            <div class="ml-2 leading-6 truncate"><strong>Committee: </strong>{{ meeting?.committeeDetails?.name || '-' }}</div>
+          </div>
+        </div>
+
+          <mat-expansion-panel #uploadedDocumentsPanel [expanded]="panelOpenState" (opened)="uploadedDocumentsPanelState = true"
+          (closed)="uploadedDocumentsPanelState = false" class="bg-winter-sky mt-6 py-3 specific-class">
+          <mat-expansion-panel-header class="bg-winter-sky specific-class">
+              <mat-panel-title class="mr-0">
+                <h3 class="text-base-lg font-bold text-primary">Uploaded Documents</h3>
+                  <mat-icon class="icon-size-5 font-bold text-black ml-auto"
+                      *ngIf="!uploadedDocumentsPanelState" [svgIcon]="'mat_solid:arrow_drop_down'"></mat-icon>
+                  <mat-icon class="icon-size-5 font-bold text-black ml-auto"
+                      *ngIf="uploadedDocumentsPanelState" [svgIcon]="'mat_solid:arrow_drop_up'"></mat-icon>
+              </mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-uploaded-documents [documents]="meeting?.documents" [elementCode]="meeting.code" [target]="'meeting'">
+          </app-uploaded-documents>
+          </mat-expansion-panel>
+
+          <ng-container *ngIf="meeting.agenda">
+            <mat-expansion-panel #uploadedDocumentsPanel [expanded]="panelOpenState" (opened)="uploadedDocumentsPanelState = true"
+            (closed)="uploadedDocumentsPanelState = false" class="bg-winter-sky mt-6 py-3 specific-class">
+            <mat-expansion-panel-header class="bg-winter-sky specific-class">
+                <mat-panel-title class="mr-0">
+                  <h3 class="text-base-lg font-bold text-primary">Agenda Items</h3>
+                    <mat-icon class="icon-size-5 font-bold text-black ml-auto"
+                        *ngIf="!uploadedDocumentsPanelState" [svgIcon]="'mat_solid:arrow_drop_down'"></mat-icon>
+                    <mat-icon class="icon-size-5 font-bold text-black ml-auto"
+                        *ngIf="uploadedDocumentsPanelState" [svgIcon]="'mat_solid:arrow_drop_up'"></mat-icon>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+              <div class="divide-y">
+                  <div class="grid grid-cols-2 py-2" *ngFor="let agenda of meeting?.agenda; let i = index">
+                      <div class="flex items-center" *ngIf="agenda.title">
+                          <div class="h-2 w-2 flex-0 rounded-full bg-gray-400"></div>
+                          <div class="ml-3 font-semibold truncate">
+                              {{ agenda?.title }}
+                          </div>
+                      </div>
+                  </div>
+          </div>
+            </mat-expansion-panel>
+          </ng-container>
+
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="editMode">
+    <div class="
+        relative
+        w-full
+        h-20
+        px-8
+        sm:px-12
+        bg-white
+        dark:bg-accent-700
+      ">
+      <div class="flex items-center justify-end w-full max-w-3xl mx-auto pt-6">
+        <button mat-icon-button [matTooltip]="'Close'" [routerLink]="['../']">
+          <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="relative flex flex-col flex-auto items-center px-6 sm:px-12">
+      <div class="w-full max-w-3xl">
+        <form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
+
+            <div class="mt-1">
+                <mat-form-field class="w-full">
+                    <mat-label>Meeting Number</mat-label>
+                    <input matInput [formControlName]="'name'" [placeholder]="'Meeting Number'" [spellcheck]="false" />
+                </mat-form-field>
+            </div>
+          <div class="mt-1">
+            <mat-form-field class="w-full">
+              <mat-label>Title</mat-label>
+              <input matInput [formControlName]="'title'" [placeholder]="'Title'" [spellcheck]="false" />
+              <mat-error *ngIf="form.get('title').hasError('required')">Field Required</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="mt-1">
+            <mat-form-field class="w-full">
+              <mat-label>Start Date</mat-label>
+              <input matInput [matDatepicker]="startAt" [formControlName]="'starting_at'" />
+              <mat-error *ngIf="form.get('starting_at').hasError('required')">Field Required</mat-error>
+              <mat-datepicker-toggle matSuffix [for]="startAt"></mat-datepicker-toggle>
+              <mat-datepicker #startAt></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+          <div class="mt-1">
+            <mat-form-field class="w-full">
+              <mat-label>End Date</mat-label>
+              <input matInput [matDatepicker]="endAt" [formControlName]="'ending_at'" [min]="getStartDate()" />
+              <mat-error *ngIf="form.get('ending_at').hasError('required')">Field Required</mat-error>
+              <mat-datepicker-toggle matSuffix [for]="endAt"></mat-datepicker-toggle>
+              <mat-datepicker #endAt></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+<!--           <mat-error class="text-md font-semibold" *ngIf="form.errors?.startDateAfterEndDate">
+            Start date cannot be greater than the end date.
+          </mat-error> -->
+
+          <div class="mt-1">
+              <mat-form-field class="w-full">
+                <mat-label>Type</mat-label>
+                <mat-select [formControlName]="'type'">
+                  <mat-option *ngFor="let key of meetingTypeKeys" [value]="meetingTypeEnum[key]">
+                    {{ meetingTypeEnum[key] }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+          </div>
+
+          <mat-form-field class="w-full"
+            *ngIf="form.get('type').value && form.get('type').value !== meetingTypeEnum.COMMITTEE_MEETING">
+            <mat-label>Organization</mat-label>
+            <mat-select formControlName="organizationCode">
+              <mat-option *ngFor="let organization of organizations$ | async" [value]="organization.code">
+                {{ organization.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          
+          <div class="flex gap-x-2" *ngIf="form.get('type').value === meetingTypeEnum.COMMITTEE_MEETING">
+
+            <mat-form-field class="flex-1">
+              <mat-label>Organization</mat-label>
+              <mat-select #org formControlName="organizationCode" (selectionChange)="onOrgChange(org?.value)">
+                <mat-option *ngFor="let organization of organizations$ | async" [value]="organization.code">
+                  {{ organization.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          
+            <mat-form-field class="flex-1">
+              <mat-label>Committee</mat-label>
+              <mat-select formControlName="committee">
+                <mat-option *ngFor="let committee of filteredCommittees$ | async" [value]="committee.code">
+                  {{ committee.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <ng-container *ngIf="!isNewMeeting">
+            <br /><br />
+            <mat-divider></mat-divider>
+
+            <div class="mt-8">
+              <div class="flex sm:items-center mb-6">
+                <h2 class="text-lg font-semibold text-primary">Agenda</h2>
+              </div>
+
+              <div class="space-y-4">
+                <ng-container *ngFor="
+                    let agendaItem of form.get('agenda').value;
+                    let i = index;
+                    trackBy: trackByFn
+                  ">
+                  <div [ngClass]="{'flex': true, 'opacity-50 pointer-events-none': !agendaItem.is_activated}">
+                    <ng-container *ngIf="agendaItem?.title">
+                      <div class="flex sm:items-center">
+                        <mat-icon [svgIcon]="'heroicons_outline:clipboard-list'"></mat-icon>
+                        <div class="ml-2 leading-6">
+                          {{ agendaItem.title }}
+                        </div>
+                      </div>
+                    </ng-container>
+
+                    <ng-container>
+                      <div class="flex items-center w-10 pl-2">
+                        <button class="w-8 h-8 min-h-8" mat-icon-button (click)="editAgendaItemField(i)"
+                          matTooltip="Edit">
+                          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil'"></mat-icon>
+                        </button>
+
+                        <ng-container *ngIf="agendaItemHasDecision(agendaItem)">
+                          <button class="w-8 h-8 min-h-8" mat-icon-button
+                            (click)="addAgendaItemDocumentField(i, form.get('agenda'))" matTooltip="Upload">
+                            <mat-icon class="icon-size-5" [svgIcon]="'mat_solid:upload'"></mat-icon>
+                          </button>
+                        </ng-container>
+
+<!--                         <button class="w-8 h-8 min-h-8" mat-icon-button
+                          (click)="removeAgendaItemField(i, form.get('agenda'))" matTooltip="Remove Permanently">
+                          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                        </button> -->
+
+                        <button class="w-8 h-8 min-h-8" mat-icon-button
+                        (click)="deactivateAgendaItemField(i, form.get('agenda'))" matTooltip="Deactivate">
+                        <mat-icon class="icon-size-5" [svgIcon]="'mat_solid:disabled_by_default'"></mat-icon>
+                        </button>
+
+                        <div class="flex items-center pl-2">
+                          <mat-chip-set>
+                            <mat-chip class="cursor-pointer" color="accent" [disableRipple]="true" [removable]="true"
+                              [class.bg-red-200]="!agendaItemHasDecision(agendaItem)"
+                              (click)="editAgendaItemDecision(i, form.get('agenda'))">
+                              Decision
+                            </mat-chip>
+                          </mat-chip-set>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </ng-container>
+              </div>
+
+              <div class="
+                  group
+                  inline-flex
+                  items-center
+                  mt-2
+                  -ml-4
+                  py-2
+                  px-4
+                  rounded
+                  cursor-pointer
+                " (click)="addAgendaItemField()">
+                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                <span class="ml-2 font-medium text-secondary group-hover:underline">Add Agenda Item</span>
+              </div>
+            </div>
+
+            <br /><br />
+            <mat-divider></mat-divider>
+
+            <div class="mt-8">
+              <div class="flex sm:items-center mb-6">
+                <h2 class="text-lg font-semibold text-primary">Freestanding Decisions</h2>
+              </div>
+
+              <div class="space-y-4">
+                <ng-container *ngFor="
+                    let agendaItem of form.get('decisions').value;
+                    let i = index;
+                    trackBy: trackByFn
+                  ">
+                  <div class="flex">
+                    <ng-container *ngIf="agendaItem">
+                      <div class="flex sm:items-center">
+                        <mat-icon [svgIcon]="'heroicons_outline:clipboard-check'"></mat-icon>
+                        <div class="ml-2 leading-6">
+                          Decision {{ i + 1 }}
+                        </div>
+                      </div>
+                    </ng-container>
+
+                    <ng-container>
+                      <div class="flex items-center w-10 pl-2">
+                        <button class="w-8 h-8 min-h-8" mat-icon-button
+                          (click)="editAgendaItemDecision(i, form.get('decisions'))" matTooltip="Edit">
+                          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil'"></mat-icon>
+                        </button>
+
+                        <button class="w-8 h-8 min-h-8" mat-icon-button
+                          (click)="removeAgendaItemField(i, form.get('decisions'))" matTooltip="Remove">
+                          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                        </button>
+                      </div>
+                    </ng-container>
+                  </div>
+                </ng-container>
+              </div>
+
+              <div class="
+                  group
+                  inline-flex
+                  items-center
+                  mt-2
+                  -ml-4
+                  py-2
+                  px-4
+                  rounded
+                  cursor-pointer
+                " (click)="addDecision()">
+                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                <span class="ml-2 font-medium text-secondary group-hover:underline">Add Decision</span>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="!isNewMeeting">
+            <br /><br />
+            <mat-divider></mat-divider>
+
+        <mat-expansion-panel #uploadedDocumentsPanel [expanded]="panelOpenState" (opened)="uploadedDocumentsPanelState = true"
+            (closed)="uploadedDocumentsPanelState = false" class="bg-winter-sky mt-6 py-3 specific-class">
+            <mat-expansion-panel-header class="bg-winter-sky specific-class">
+                <mat-panel-title class="mr-0">
+                  <h3 class="text-base-lg font-bold text-primary">Uploaded Documents</h3>
+                    <mat-icon class="icon-size-5 font-bold text-black ml-auto"
+                        *ngIf="!uploadedDocumentsPanelState" [svgIcon]="'mat_solid:arrow_drop_down'"></mat-icon>
+                    <mat-icon class="icon-size-5 font-bold text-black ml-auto"
+                        *ngIf="uploadedDocumentsPanelState" [svgIcon]="'mat_solid:arrow_drop_up'"></mat-icon>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <app-uploaded-documents [documents]="meeting?.documents" [elementCode]="meeting.code" [target]="'meeting'">
+            </app-uploaded-documents>
+        </mat-expansion-panel>
+        <mat-expansion-panel #uploadDocumentsPanel [expanded]="panelOpenState" (opened)="uploadDocumentsPanelState = true"
+            (closed)="uploadDocumentsPanelState = false" class="bg-winter-sky mt-6 py-3 specific-class">
+            <mat-expansion-panel-header class="bg-winter-sky specific-class">
+                <mat-panel-title class="mr-0">
+                  <h3 class="text-base-lg font-bold text-primary">Upload Files Here</h3>
+                    <mat-icon class="icon-size-5 font-bold text-black ml-auto"
+                        *ngIf="!uploadDocumentsPanelState" [svgIcon]="'mat_solid:arrow_drop_down'"></mat-icon>
+                    <mat-icon class="icon-size-5 font-bold text-black ml-auto"
+                        *ngIf="uploadDocumentsPanelState" [svgIcon]="'mat_solid:arrow_drop_up'"></mat-icon>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <app-documentation (uploadFile)="uploadFile($event)">
+            </app-documentation>
+        </mat-expansion-panel>
+        </ng-container>
+
+          <div class="
+              flex
+              items-center
+              mt-10
+              -mx-6
+              sm:-mx-12
+              py-4
+              pr-8
+              pl-6
+              sm:pr-12 sm:pl-10
+              border-t
+              bg-gray-50
+              dark:bg-transparent
+            ">
+            <button *ngIf="!isNewMeeting" mat-button [color]="'warn'" [matTooltip]="'Archive'" (click)="deleteMeeting()">
+              Archive
+            </button>
+            <button class="ml-auto" mat-button [matTooltip]="'Cancel'" (click)="toggleEditMode()">
+              Cancel
+            </button>
+            <button class="ml-2 text-white" mat-flat-button [color]="'primary'" [disabled]="form.invalid" [matTooltip]="'Save'"
+              (click)="updateMeeting()">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-container>
+</div>

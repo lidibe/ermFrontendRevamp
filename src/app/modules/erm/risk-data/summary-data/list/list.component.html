@@ -41,7 +41,7 @@
                     <div class="flex items-center mt-4 sm:mt-0 md:mt-4">
                         <div class="flex-auto">
                             <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-full min-w-50">
-                                <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
                                 <input
                                     matInput
                                     [formControl]="searchInputControl"
@@ -51,7 +51,7 @@
                             </mat-form-field>
                         </div>
 
-                        <button class="ml-4" mat-flat-button [color]="'primary'" (click)="createSummaryData()">
+                        <button class="ml-4 mb-6" mat-flat-button [color]="'primary'" (click)="createSummaryData()">
                             <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                             <span class="ml-2 mr-1">Add</span>
                         </button>
@@ -62,7 +62,7 @@
                     <ng-container *ngIf="summaryDatas$ | async as summaryDatas">
                         <ng-container *ngIf="summaryDatas.length; else noSummaryDatas">
                             <ng-container
-                                *ngFor="let item of summaryDatas | sort: { property: 'key', descending: false }; let i = index; trackBy: trackByFn"
+                                *ngFor="let item of summaryDatas; let i = index; trackBy: trackByFn"
                             >
                                 <div
                                     class="z-20 flex items-center px-6 py-4 md:px-8 cursor-pointer hover:bg-hover border-b"

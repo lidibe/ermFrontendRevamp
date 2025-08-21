@@ -119,23 +119,21 @@ export class SummaryDataListComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
 
-    goToSummaryData(id: string): void {
-        let route = this._activatedRoute;
-        while (route.firstChild) {
-            route = route.firstChild;
-        }
-        this._router.navigate(['../', id], { relativeTo: route });
-        this._changeDetectorRef.markForCheck();
-    }
+  private get _navBase(): ActivatedRoute {
+    let r: ActivatedRoute = this._activatedRoute;
+    while (r.firstChild) r = r.firstChild;
+    return r.parent ?? this._activatedRoute;
+  }
 
-    onBackdropClicked(): void {
-        let route = this._activatedRoute;
-        while (route.firstChild) {
-            route = route.firstChild;
-        }
-        this._router.navigate(['../'], { relativeTo: route });
-        this._changeDetectorRef.markForCheck();
-    }
+  goToSummaryData(id: string): void {
+    this._router.navigate(['./', id], { relativeTo: this._navBase });
+    this._changeDetectorRef.markForCheck();
+  }
+
+  onBackdropClicked(): void {
+    this._router.navigate(['..'], { relativeTo: this._navBase });
+    this._changeDetectorRef.markForCheck();
+  }
 
     trackByFn(index: number, item: any): any {
         return item.key || index;

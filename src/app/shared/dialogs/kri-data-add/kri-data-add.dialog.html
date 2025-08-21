@@ -1,19 +1,19 @@
 <div class="flex flex-col max-w-240 md:min-w-160 -m-6">
     <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
-        <div class="text-lg">Add KRI Data</div>
+        <div class="text-lg text-white">Add KRI Data</div>
         <button
                 mat-icon-button
                 [tabIndex]="-1" (click)="closeDialog()">
             <mat-icon
-                    class="text-current"
-                    [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                    class="text-white"
+                    [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
         </button>
     </div>
 
     <form [formGroup]="form"
             class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto">
 
-        <mat-form-field class="w-full">
+        <mat-form-field class="w-full mt-6">
             <mat-label>KRI</mat-label>
             <mat-select formControlName="kriId" required>
                 <mat-option *ngFor="let item of kris" [value]="item.id">

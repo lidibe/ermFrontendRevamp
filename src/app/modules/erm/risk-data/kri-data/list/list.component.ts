@@ -22,6 +22,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { KriService } from '../../../master-data/kri/kri.service';
 import { Kri } from '../../../master-data/kri/kri.types';
+import { fuseAnimations } from '@fuse/animations';
 
 @Component({
     selector: 'app-risk-data-kri-data-list',
@@ -29,6 +30,7 @@ import { Kri } from '../../../master-data/kri/kri.types';
     styleUrls: ['./list.component.scss'],
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
+    animations: fuseAnimations,
     providers: [ErmService]
 })
 export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -155,6 +157,7 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     closeDetails(): void {
         this.selectedKriData = null;
+        this._changeDetectorRef.markForCheck();
     }
 
     ngAfterViewInit(): void {
@@ -177,6 +180,7 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
             }),
             map(() => {
                 this.isLoading = false;
+                this._changeDetectorRef.markForCheck();
             })
         ).subscribe();
     }
@@ -248,6 +252,7 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
             kriId: undefined,
             id: '',
         };
+        this._changeDetectorRef.markForCheck();
     }
 
     subscriberToButtonEvents(): void {
@@ -263,6 +268,7 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
                 }),
                 map(() => {
                     this.isLoading = false;
+                    this._changeDetectorRef.markForCheck();
                 })
             )
             .subscribe();
@@ -279,6 +285,7 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
                 }),
                 map(() => {
                     this.isLoading = false;
+                    this._changeDetectorRef.markForCheck();
                 })
             )
             .subscribe();

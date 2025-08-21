@@ -17,7 +17,7 @@
     <div class="text-4xl font-extrabold tracking-tight">KRI Data</div>
 
     <div class="flex flex-shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
-      <mat-form-field class="min-w-50 w-80">
+      <mat-form-field class="min-w-50 w-80 mt-6">
         <mat-label>Risk Area</mat-label>
         <mat-select class="mr-1.5" [(ngModel)]="query.kriId">
           <mat-option *ngFor="let kri of kris;" [value]="kri.id">
@@ -26,7 +26,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field class="min-w-50 pl-6">
+      <mat-form-field class="min-w-50 pl-6 mt-6">
         <mat-label>Month</mat-label>
         <mat-select class="mr-1.5" [(ngModel)]="query.month">
           <mat-option *ngFor="let month of months;" [value]="month.id">
@@ -35,7 +35,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field class="min-w-50 pl-6">
+      <mat-form-field class="min-w-50 pl-6 mt-6">
         <mat-label>Year</mat-label>
         <mat-select class="mr-1.5" [(ngModel)]="query.year">
           <mat-option *ngFor="let year of years;" [value]="year">
@@ -50,7 +50,7 @@
         [color]="'secondary'"
         (click)="filterButtonPress.next(0)"
         *ngIf="!filterEnabled">
-        <mat-icon [svgIcon]="'heroicons_outline:filter'"></mat-icon>
+        <mat-icon [svgIcon]="'heroicons_outline:funnel'"></mat-icon>
       </button>
 
       <button
@@ -59,7 +59,7 @@
         [color]="'warn'"
         (click)="filterButtonPress.next(0)"
         *ngIf="filterEnabled">
-        <mat-icon [svgIcon]="'heroicons_outline:filter'"></mat-icon>
+        <mat-icon [svgIcon]="'heroicons_outline:funnel'"></mat-icon>
       </button>
 
       <button
@@ -169,15 +169,15 @@
               </th>
               <td class="pr-4 truncate" mat-cell *matCellDef="let item">
                 <span *ngIf="item.rLimit <= item.bau">
-                  <mat-icon class="mat-primary" svgIcon="heroicons_outline:emoji-happy" *ngIf="item.value >= item.bau"></mat-icon>
-                  <mat-icon style="color: orange;" svgIcon="heroicons_outline:emoji-sad" *ngIf="((item.value < item.bau) && (item.value >= item.rLimit))"></mat-icon>
-                  <mat-icon class="mat-warn" svgIcon="heroicons_outline:emoji-sad" *ngIf="((item.value < item.bau) && (item.value < item.rLimit))"></mat-icon>
+                  <mat-icon class="mat-primary" svgIcon="heroicons_outline:face-smile" *ngIf="item.value >= item.bau"></mat-icon>
+                  <mat-icon style="color: orange;" svgIcon="heroicons_outline:face-frown" *ngIf="((item.value < item.bau) && (item.value >= item.rLimit))"></mat-icon>
+                  <mat-icon class="mat-warn" svgIcon="heroicons_outline:face-frown" *ngIf="((item.value < item.bau) && (item.value < item.rLimit))"></mat-icon>
                 </span>
 
                 <span *ngIf="item.rLimit > item.bau">
-                  <mat-icon class="mat-primary" svgIcon="heroicons_outline:emoji-happy" *ngIf="item.value <= item.bau"></mat-icon>
-                  <mat-icon style="color: orange;" svgIcon="heroicons_outline:emoji-sad" *ngIf="((item.value > item.bau) && (item.value <= item.rLimit))"></mat-icon>
-                  <mat-icon class="mat-warn" svgIcon="heroicons_outline:emoji-sad" *ngIf="((item.value > item.bau) && (item.value > item.rLimit))"></mat-icon>
+                  <mat-icon class="mat-primary" svgIcon="heroicons_outline:face-smile" *ngIf="item.value <= item.bau"></mat-icon>
+                  <mat-icon style="color: orange;" svgIcon="heroicons_outline:face-frown" *ngIf="((item.value > item.bau) && (item.value <= item.rLimit))"></mat-icon>
+                  <mat-icon class="mat-warn" svgIcon="heroicons_outline:face-frown" *ngIf="((item.value > item.bau) && (item.value > item.rLimit))"></mat-icon>
                 </span>
               </td>
             </ng-container>
@@ -269,7 +269,7 @@
                               <span class="ml-2">Data updated</span>
                             </ng-container>
                             <ng-container *ngIf="flashMessage === 'error'">
-                              <mat-icon class="text-red-500" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                              <mat-icon class="text-red-500" [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
                               <span class="ml-2">An error occurred, try again!</span>
                             </ng-container>
                           </div>

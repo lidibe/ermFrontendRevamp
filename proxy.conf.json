@@ -1,6 +1,6 @@
 {
   "/ms/api/**": {
-    "target": "http://localhost:9999",
+    "target": "https://afxm-ms-api-ext-gw.uat.afreximbank.net",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true

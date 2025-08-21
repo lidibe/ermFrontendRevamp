@@ -13,16 +13,11 @@
     <ng-container *ngIf="!editMode">
 
         <!-- Header -->
-        <div class="relative w-full h-20 sm:h-20 px-8 sm:px-12 bg-primary-700 dark:bg-accent-700">
-            <div class="flex items-center justify-end w-full max-w-3xl mx-auto pt-6">
-                <button
-                    mat-icon-button
-                    [matTooltip]="'Close'"
-                    [routerLink]="['../']">
-                    <mat-icon
-                        class="text-white"
-                        [svgIcon]="'heroicons_outline:x'"></mat-icon>
-                </button>
+        <div class="relative w-full h-28 px-8 sm:px-12 bg-primary-700 dark:bg-accent-700">
+        <div class="flex items-center justify-end w-full max-w-3xl mx-auto pt-6">
+        <mat-icon (click)="closeDrawer()" mat-icon-button [matTooltip]="'Close'" [routerLink]="['../']"
+        class="text-white icon-size-7 cursor-pointer" [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
+               
             </div>
         </div>
 
@@ -39,7 +34,7 @@
                             (click)="toggleEditMode(true)">
                             <mat-icon
                                 class="icon-size-5"
-                                [svgIcon]="'heroicons_solid:pencil-alt'"></mat-icon>
+                                [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
                             <span class="ml-2">Edit</span>
                         </button>
                     </div>
@@ -81,16 +76,10 @@
     <ng-container *ngIf="editMode">
 
         <!-- Header -->
-        <div class="relative w-full h-20 sm:h-20 px-8 sm:px-12 bg-primary-700 dark:bg-accent-700">
+        <div class="relative w-full h-28 px-8 sm:px-12 bg-primary-700 dark:bg-accent-700">
             <div class="flex items-center justify-end w-full max-w-3xl mx-auto pt-6">
-                <button
-                        mat-icon-button
-                        [matTooltip]="'Close'"
-                        [routerLink]="['../']">
-                    <mat-icon
-                            class="text-white"
-                            [svgIcon]="'heroicons_outline:x'"></mat-icon>
-                </button>
+        <mat-icon (click)="closeDrawer()" mat-icon-button [matTooltip]="'Close'" [routerLink]="['../']"
+        class="text-white icon-size-7 cursor-pointer" [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
             </div>
         </div>
 
@@ -161,7 +150,7 @@
                                 <span class="ml-2">Data updated</span>
                             </ng-container>
                             <ng-container *ngIf="flashMessage === 'error'">
-                                <mat-icon class="text-red-500" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                <mat-icon class="text-red-500" [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
                                 <span class="ml-2">An error occurred, try again!</span>
                             </ng-container>
                         </div>

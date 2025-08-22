@@ -12,10 +12,10 @@
       class="ml-4"
       mat-flat-button
       [disabled]="isUserLoading"
-      color="primary"
+      [color]="'primary'"
       (click)="createUserGroup()"
     >
-      <mat-icon svgIcon="heroicons_outline:plus"></mat-icon>
+      <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
       <span class="ml-2 mr-1">Add</span>
     </button>
   </app-header>
@@ -55,7 +55,6 @@
                 {{ item.members.length }}
               </td>
             </ng-container>
-
             <ng-container matColumnDef="details">
               <th
                 class="w-24 pr-8 bg-gray-50 dark:bg-black dark:bg-opacity-5"
@@ -107,6 +106,111 @@
                       >
                       </app-user-groups-form>
                     </div>
+                    <!-- <form
+                                            class="flex flex-col w-full"
+                                            [formGroup]="selectedKriDataForm">
+
+                                        <div class="flex w-full">
+
+                                            <div class="flex flex-auto pl-12 pt-12 pr-12 pb-12">
+
+                                                <mat-form-field class="pr-6 w-1/6">
+                                                    <mat-label>Name</mat-label>
+                                                    <input
+                                                            matInput
+                                                            [formControlName]="'kriName'">
+                                                </mat-form-field>
+
+                                                <mat-form-field class="pr-6 w-1/6">
+                                                    <mat-label>Month</mat-label>
+                                                    <mat-select
+                                                            class="mr-1.5"
+                                                            [formControlName]="'month'">
+                                                        <mat-option
+                                                                *ngFor="let item of months; trackBy: trackByFn"
+                                                                [value]="item.id">{{item.value}}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+
+                                                <mat-form-field class="pr-6 w-1/6">
+                                                    <mat-label>Year</mat-label>
+                                                    <mat-select
+                                                            class="mr-1.5"
+                                                            [formControlName]="'year'">
+                                                        <mat-option
+                                                                *ngFor="let item of years; trackBy: trackByFn"
+                                                                [value]="item">{{item}}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+
+                                                <mat-form-field class="pr-6 w-1/6">
+                                                    <mat-label>BAU</mat-label>
+                                                    <input type="number"
+                                                           matInput
+                                                           [formControlName]="'bau'">
+                                                </mat-form-field>
+
+                                                <mat-form-field class="pr-6 w-1/6">
+                                                    <mat-label>Trigger</mat-label>
+                                                    <input
+                                                            matInput
+                                                            [formControlName]="'trigger'">
+                                                </mat-form-field>
+
+                                                <mat-form-field class="pr-6 w-1/6">
+                                                    <mat-label>Limit</mat-label>
+                                                    <input type="number"
+                                                           matInput
+                                                           [formControlName]="'rLimit'">
+                                                </mat-form-field>
+
+                                                <mat-form-field class="pr-6 w-1/6">
+                                                    <mat-label>Value</mat-label>
+                                                    <input type="number"
+                                                           matInput
+                                                           [formControlName]="'value'">
+                                                </mat-form-field>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="flex items-center justify-between w-full border-t px-8 py-4">
+                                            <button
+                                                    class="-ml-4"
+                                                    mat-button
+                                                    [color]="'warn'">
+                                                Delete
+                                            </button>
+                                            <div class="flex items-center">
+                                                <div
+                                                        class="flex items-center mr-4"
+                                                        *ngIf="flashMessage">
+                                                    <ng-container *ngIf="flashMessage === 'success'">
+                                                        <mat-icon
+                                                                class="text-green-500"
+                                                                [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                                        <span class="ml-2">Data updated</span>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="flashMessage === 'error'">
+                                                        <mat-icon
+                                                                class="text-red-500"
+                                                                [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                                        <span class="ml-2">An error occurred, try again!</span>
+                                                    </ng-container>
+                                                </div>
+                                                <button
+                                                        mat-flat-button
+                                                        [color]="'primary'"
+                                                (click)="updateSelectedKriData()">
+                                                    Update
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </form> -->
                   </div>
                 </div>
               </td>
@@ -132,7 +236,17 @@
       </ng-container>
 
       <ng-template #noGroupsArea>
-        <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">
+        <div
+          class="
+            p-8
+            sm:p-16
+            border-t
+            text-4xl
+            font-semibold
+            tracking-tight
+            text-center
+          "
+        >
           There are no user groups!
         </div>
       </ng-template>

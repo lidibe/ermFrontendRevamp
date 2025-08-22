@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { fuseAnimations } from '@fuse/animations';
 import { Subject } from 'rxjs';
 import { takeUntil, finalize, take } from 'rxjs/operators';
 import { AddDialogComponent } from '../add-dialog/add-dialog.component';
 import { UserGroupsService } from '../user-groups.service';
 import { Group, GroupAndUsers, User } from '../user-groups.types';
-import { fuseAnimations } from '@fuse/animations';
 
 @Component({
   selector: 'app-list',

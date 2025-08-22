@@ -176,12 +176,18 @@ export const appRoutes: Route[] = [
                 (m) => m.RiskDataModule
               ),
           },
-            {
-              path: 'user-groups',
-              loadChildren: () =>
-                import('app/modules/admin/user-groups/user-groups.module')
-                  .then(m => m.UserGroupsModule),
-            },
+          {
+            path: 'user-groups',
+            children: [
+              {
+                path: '',
+                loadChildren: () =>
+                  import(
+                    'app/modules/admin/user-groups/user-groups.module'
+                  ).then((m) => m.UserGroupsModule),
+              },
+            ],
+          },
                   ],
                 },
 

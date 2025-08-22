@@ -9,7 +9,7 @@
     {{ alert.message }}
   </fuse-alert>
 
-  <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+  <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-4 ml-4 border-b">
     <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
       <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
     </div>
@@ -82,7 +82,7 @@
     </div>
   </div>
 
-  <div class="flex flex-auto overflow-hidden">
+  <div class="flex flex-auto overflow-hidden ml-4">
     <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden">
 
       <ng-container *ngIf="kriDatasCount > 0; else noKriData">

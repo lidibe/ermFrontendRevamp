@@ -5,10 +5,10 @@ import { UserGroupsComponent } from './user-groups.component';
 export const userGroupsRoutes: Route[] = [
   {
     path: '',
-    component: UserGroupsComponent,   // shell / layout that contains <router-outlet>
+    component: UserGroupsComponent,
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'management' }, // redirect ONLY
-      { path: 'management', component: ListComponent },          // component ONLY
+      { path: '', pathMatch: 'full', redirectTo: 'management' },
+      { path: 'management', component: ListComponent },
     ],
   },
 ];

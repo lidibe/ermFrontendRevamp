@@ -1,6 +1,5 @@
 <app-dialog-container (onCloseDialog)="closeDialog()">
   <app-user-groups-form
-    *ngIf="data"
     (onSubmit)="onSubmit($event)"
     [users]="data"
     buttonLabel="Save"

@@ -1,27 +1,44 @@
 <div class="flex flex-col w-full">
 
+    <!-- View mode -->
     <ng-container *ngIf="!editMode">
-        <div class="relative w-full h-20 sm:h-20 px-8 sm:px-12 bg-primary-700 dark:bg-accent-700">
+
+        <!-- Header -->
+        <div class="relative w-full h-28 px-8 sm:px-12 bg-primary-700 dark:bg-accent-700">
+            <!-- Background -->
+            <!--ng-container>
+                <img
+                    class="absolute inset-0 object-cover w-full h-full"
+                    src="/assets/images/kri-back.jpg">
+            </ng-container-->
+            <!-- Close button -->
             <div class="flex items-center justify-end w-full max-w-3xl mx-auto pt-6">
-                <button mat-icon-button [matTooltip]="'Close'" [routerLink]="['../']">
-                    <mat-icon class="text-white" [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
-                </button>
+            <mat-icon (click)="closeDrawer()" mat-icon-button [matTooltip]="'Close'" [routerLink]="['../']"
+            class="text-white icon-size-7 cursor-pointer" [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
             </div>
         </div>
 
+        <!-- Contact -->
         <div class="relative flex flex-col flex-auto items-center p-6 pt-0 sm:p-12 sm:pt-0">
             <div class="w-full max-w-3xl">
 
                 <div class="flex flex-auto items-end -mt-16">
-                    <div class="flex items-center justify-center w-32 h-32 rounded-full overflow-hidden"></div>
+
+                    <div class="flex items-center justify-center w-32 h-32 rounded-full overflow-hidden">
+                    </div>
 
                     <div class="flex items-center ml-auto mb-1">
-                        <button mat-stroked-button (click)="toggleEditMode(true)">
-                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
+                        <button
+                            mat-stroked-button
+                            (click)="toggleEditMode(true)">
+                            <mat-icon
+                                class="icon-size-5"
+                                [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
                             <span class="ml-2">Edit</span>
                         </button>
                     </div>
                 </div>
+
 
                 <div class="mt-3 text-3xl font-bold text-primary-700">{{kri.key}} - {{kri.name}}</div>
 
@@ -74,129 +91,199 @@
         </div>
     </ng-container>
 
+    <!-- Edit mode -->
     <ng-container *ngIf="editMode">
 
-        <div class="relative w-full h-20 sm:h-20 px-8 sm:px-12 bg-primary-700 dark:bg-accent-700">
+        <!-- Header -->
+        <div class="relative w-full h-28 px-8 sm:px-12 bg-primary-700 dark:bg-accent-700">
+            <!-- Background -->
+            <ng-container>
+                <!--img
+                        class="absolute inset-0 object-cover w-full h-full"
+                        src="/assets/images/kri-back.jpg"-->
+            </ng-container>
+            <!-- Close button -->
             <div class="flex items-center justify-end w-full max-w-3xl mx-auto pt-6">
-                <button mat-icon-button [matTooltip]="'Close'" [routerLink]="['../']">
-                    <mat-icon class="text-white" [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
-                </button>
+            <mat-icon (click)="closeDrawer()" mat-icon-button [matTooltip]="'Close'" [routerLink]="['../']"
+            class="text-white icon-size-7 cursor-pointer" [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
             </div>
         </div>
 
+        <!-- Contact form -->
         <div class="relative flex flex-col flex-auto items-center px-6 sm:px-12">
             <div class="w-full max-w-3xl">
                 <form [formGroup]="kriForm">
 
+                    <!-- Avatar -->
                     <div class="flex flex-auto items-end -mt-16">
                         <div class="relative flex items-center justify-center w-32 h-16 rounded-full overflow-hidden">
-                            <div class="absolute inset-0 flex items-center justify-center z-20"></div>
+                            <div class="absolute inset-0 flex items-center justify-center z-20">
+                            </div>
                         </div>
                     </div>
 
+                    <!-- Name -->
+
                     <div class="mt-8">
-                        <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-form-field class="treo-mat-no-subscript w-full">
                             <mat-label>Kri Number</mat-label>
-                            <input matInput formControlName="key" placeholder="Kri number" [spellcheck]="false" disabled>
+                            <input
+                                    matInput
+                                    [formControlName]="'key'"
+                                    [placeholder]="'Kri number'"
+                                    [spellcheck]="false" disabled>
                         </mat-form-field>
                     </div>
 
                     <div class="mt-8">
-                        <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-form-field class="treo-mat-no-subscript w-full">
                             <mat-label>Risk Area</mat-label>
-                            <mat-select class="mr-1.5" formControlName="riskAreaId" required>
-                                <mat-option *ngFor="let riskArea of riskAreas; trackBy: trackByFn" [value]="riskArea.id">
-                                    {{riskArea.name}}
+                            <mat-select
+                                    class="mr-1.5"
+                                    formControlName="riskAreaId" required>
+                                <mat-option
+                                        *ngFor="let riskArea of riskAreas; trackBy: trackByFn"
+                                        [value]="riskArea.id">{{riskArea.name}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
 
+
+
                     <div class="mt-8">
-                        <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-form-field class="treo-mat-no-subscript w-full">
                             <mat-label>Name</mat-label>
-                            <input matInput formControlName="name" placeholder="Name" [spellcheck]="false" required>
-                            <mat-error *ngIf="kriForm.get('name')?.hasError('required')">
-                                Field is required.
+                            <input
+                                    matInput
+                                    [formControlName]="'name'"
+                                    [placeholder]="'Name'"
+                                    [spellcheck]="false" required>
+                            <mat-error *ngIf="kriForm.get('name').hasError('required')">
+                                {{'Field is required.'}}
                             </mat-error>
                         </mat-form-field>
                     </div>
 
                     <div class="mt-8">
-                        <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-form-field class="treo-mat-no-subscript w-full">
                             <mat-label>Nature</mat-label>
-                            <mat-select formControlName="nature" required>
-                                <mat-option value="N">Number</mat-option>
-                                <mat-option value="P">Percentage</mat-option>
+                            <!--mat-icon
+                                    matPrefix
+                                    class="hidden sm:flex icon-size-5"
+                                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon-->
+                            <mat-select
+                                    [formControlName]="'nature'"
+                                    required>
+                                <mat-option [value]="'N'">Number</mat-option>
+                                <mat-option [value]="'P'">Percentage</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
 
                     <div class="mt-8">
-                        <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-form-field class="treo-mat-no-subscript w-full">
                             <mat-label>Frequency</mat-label>
-                            <mat-select formControlName="frequency" required>
-                                <mat-option value="Monthly">Monthly</mat-option>
-                                <mat-option value="Quarterly">Quarterly</mat-option>
-                                <mat-option value="Bi-Annually">Bi-Annually</mat-option>
-                                <mat-option value="Annually">Yearly</mat-option>
+                            <!--mat-icon
+                                    matPrefix
+                                    class="hidden sm:flex icon-size-5"
+                                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon-->
+
+                            <mat-select
+                                    [formControlName]="'frequency'"
+                                    required>
+                                <mat-option [value]="'Monthly'">Monthly</mat-option>
+                                <mat-option [value]="'Quarterly'">Quarterly</mat-option>
+                                <mat-option [value]="'Bi-Annually'">Bi-Annually</mat-option>
+                                <mat-option [value]="'Annually'">Yearly</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
 
+                    <!-- Notes -->
                     <div class="mt-8">
-                        <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-form-field class="treo-mat-textarea treo-mat-no-subscript w-full">
                             <mat-label>Description</mat-label>
-                            <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                            <mat-icon
+                                    matPrefix
+                                    class="hidden sm:flex icon-size-5"
+                                    [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
                             <textarea
-                                matInput
-                                cdkTextareaAutosize
-                                [rows]="5"
-                                formControlName="description"
-                                placeholder="Description"
-                                [spellcheck]="false"></textarea>
+                                    matInput
+                                    treoAutogrow
+                                    [rows]="5"
+                                    [formControlName]="'description'"
+                                    [placeholder]="'Description'"
+                                    [spellcheck]="false"></textarea>
                         </mat-form-field>
                     </div>
 
                     <div class="mt-8">
-                        <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-form-field class="treo-mat-no-subscript w-full">
                             <mat-label>Target/Limit</mat-label>
-                            <mat-select formControlName="tl" required>
-                                <mat-option value="T">Target</mat-option>
-                                <mat-option value="L">Limit</mat-option>
-                                <mat-option value="R">Target Range</mat-option>
+                            <mat-select [formControlName]="'tl'" required>
+                                <mat-option [value]="'T'">Target</mat-option>
+                                <mat-option [value]="'L'">Limit</mat-option>
+                                <mat-option [value]="'R'">Target Range</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
-
                     <div class="mt-8">
-                        <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-form-field class="treo-mat-no-subscript w-full">
                             <mat-label>User Group</mat-label>
-                            <mat-select formControlName="ownerGroup" required>
+                            <mat-select [formControlName]="'ownerGroup'" required>
                                 <mat-option *ngFor="let group of userGroups" [value]="group.code">{{group.name}}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
 
+                    <!-- Actions -->
                     <div class="flex items-center mt-10 -mx-6 sm:-mx-12 py-4 pr-8 pl-6 sm:pr-12 sm:pl-10 border-t bg-gray-50 dark:bg-transparent">
-                        <button mat-button color="warn" [matTooltip]="'Delete'">Delete</button>
-                        <button class="ml-auto" mat-button [matTooltip]="'Cancel'" (click)="toggleEditMode(false)">Cancel</button>
+                        <!-- Delete -->
+                        <button
+                                mat-button
+                                [color]="'warn'"
+                                [matTooltip]="'Delete'"
+                                >
+                            Delete
+                        </button>
+                        <!-- Cancel -->
+                        <button
+                                class="ml-auto"
+                                mat-button
+                                [matTooltip]="'Cancel'"
+                                (click)="toggleEditMode(false)">
+                            Cancel
+                        </button>
 
-                        <div class="flex items-center mr-4" *ngIf="flashMessage">
+                        <div
+                                class="flex items-center mr-4"
+                                *ngIf="flashMessage">
                             <ng-container *ngIf="flashMessage === 'success'">
-                                <mat-icon class="text-green-500" [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                <mat-icon
+                                        class="text-green-500"
+                                        [svgIcon]="'heroicons_outline:check'"></mat-icon>
                                 <span class="ml-2">Data updated</span>
                             </ng-container>
                             <ng-container *ngIf="flashMessage === 'error'">
-                                <mat-icon class="text-red-500" [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
+                                <mat-icon
+                                        class="text-red-500"
+                                        [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
                                 <span class="ml-2">An error occurred, try again!</span>
                             </ng-container>
                         </div>
-
-                        <button class="ml-2" mat-flat-button color="primary" [disabled]="kriForm.invalid" [matTooltip]="'Save'" (click)="updateKri()">
+                        <button
+                                class="ml-2"
+                                mat-flat-button
+                                [color]="'primary'"
+                                [disabled]="kriForm.invalid"
+                                [matTooltip]="'Save'"
+                                (click)="updateKri()">
                             Save
                         </button>
                     </div>
+
+
 
                 </form>
             </div>

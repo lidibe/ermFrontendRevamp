@@ -2,29 +2,26 @@ import {
     AfterViewInit,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    Component,
-    OnDestroy,
+    Component, OnDestroy,
     OnInit,
     ViewChild,
     ViewEncapsulation
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { merge, Observable, Subject } from 'rxjs';
-import { debounceTime, map, switchMap, takeUntil } from 'rxjs/operators';
-import { HttpErrorResponse } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
-
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {merge, Observable, Subject} from 'rxjs';
+import {ErmService} from '../../../../../shared/services/erm.service';
+import {debounceTime, map, switchMap, takeUntil} from 'rxjs/operators';
+import {ThresholdService} from '../threshold.service';
+import {Threshold, ThresholdPagination} from '../../../models/threshold.model';
+import {HttpErrorResponse} from '@angular/common/http';
+import {MatDialog} from '@angular/material/dialog';
+import {KriThresholdDialogComponent} from '../../../../../shared/dialogs/kri-threshold/kri-threshold.dialog.component';
+import {KriService} from '../../kri/kri.service';
+import {Kri} from '../../kri/kri.types';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertType } from '@fuse/components/alert';
-
-import { ErmService } from '../../../../../shared/services/erm.service';
-import { ThresholdService } from '../threshold.service';
-import { Threshold, ThresholdPagination } from '../../../models/threshold.model';
-import { KriThresholdDialogComponent } from '../../../../../shared/dialogs/kri-threshold/kri-threshold.dialog.component';
-import { KriService } from '../../kri/kri.service';
-import { Kri } from '../../kri/kri.types';
 
 @Component({
     selector: 'app-master-data-threshold-list',
@@ -36,62 +33,55 @@ import { Kri } from '../../kri/kri.types';
     providers: [ErmService]
 })
 export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy {
+
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
-
     alert: { type: FuseAlertType; message: string } = {
         type: 'success',
         message: ''
     };
-
     isPerforming = false;
-    showAlert = false;
+    showAlert: boolean = false;
     flashMessage: 'success' | 'error' | null = null;
-
     columns: string[] = ['key', 'name', 'period', 'bau', 'target', 'limit', 'details'];
-
     selectedThresholdForm: FormGroup;
     pagination: ThresholdPagination;
     thresholds$: Observable<Threshold[]>;
     selectedThreshold: Threshold | null = null;
-
     isLoading = true;
-    thresholdsCount = 0;
+    thresholdsCount: number = 0;
     kris: Kri[] = [];
-    filterEnabled = false;
-
+    filterEnabled: boolean;
     private _unsubscribeKriAll: Subject<any> = new Subject<any>();
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-
     filterButtonPress: Subject<any> = new Subject<any>();
     resetButtonPress: Subject<any> = new Subject<any>();
-
     years = ['2019', '2020', '2021', '2022', '2023', '2024', '2025'];
     months = [
-        { id: '1', value: 'January' },
-        { id: '2', value: 'February' },
-        { id: '3', value: 'March' },
-        { id: '4', value: 'April' },
-        { id: '5', value: 'May' },
-        { id: '6', value: 'June' },
-        { id: '7', value: 'July' },
-        { id: '8', value: 'August' },
-        { id: '9', value: 'September' },
-        { id: '10', value: 'October' },
-        { id: '11', value: 'November' },
-        { id: '12', value: 'December' }
+        {id: '1', value: 'January'},
+        {id: '2', value: 'February'},
+        {id: '3', value: 'March'},
+        {id: '4', value: 'April'},
+        {id: '5', value: 'May'},
+        {id: '6', value: 'June'},
+        {id: '7', value: 'July'},
+        {id: '8', value: 'August'},
+        {id: '9', value: 'September'},
+        {id: '10', value: 'October'},
+        {id: '11', value: 'November'},
+        {id: '12', value: 'December'},
     ];
 
     query = {
         sort: 'created_at',
-        order: 'asc' as 'asc' | 'desc' | '',
+        order: 'asc',
         page: 0,
-        year: undefined as string | undefined,
+        year: undefined,
         size: 10,
-        month: undefined as string | undefined,
-        riskAreaId: undefined as string | undefined,
-        kriId: undefined as string | undefined,
-        id: ''
+        month: undefined,
+        riskAreaId: undefined,
+        kriId: undefined,
+        id: '',
     };
 
     constructor(
@@ -99,153 +89,218 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
         private _fb: FormBuilder,
         private dialog: MatDialog,
         private _kriService: KriService,
-        private _thresholdService: ThresholdService
-    ) {}
+        private _thresholdService: ThresholdService,
+    ) {
+    }
 
     ngOnInit(): void {
+
         this.selectedThresholdForm = this._fb.group({
             id: ['', [Validators.required]],
             kri_id: ['', [Validators.required]],
-            name: { disabled: true, value: '' },
-            month: { disabled: true, value: '' },
-            year: { disabled: true, value: '' },
+            name: {disabled: true, value: ''},
+            month: {disabled: true, value: ''},
+            year: {disabled: true, value: ''},
             bau: ['', [Validators.required]],
             trigger: ['', [Validators.required]],
             rlimit: ['', [Validators.required]],
-            trigger_max: [''],
-            trigger_min: ['']
+            trigger_max: ['', []],
+            trigger_min: ['', []],
+            // trigger_min_dir: ['', []],
+            // trigger_max_dir: ['', []],
         });
 
         this.subscriberToButtonEvents();
 
+        // Get the pagination
         this._thresholdService.pagination$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((pagination: ThresholdPagination) => {
+
+                // Update the pagination
                 this.pagination = pagination;
+
+                // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
 
-        this._kriService
-            .getKris()
+        this._kriService.getKris()
             .pipe(takeUntil(this._unsubscribeKriAll))
             .subscribe((res: any) => {
                 this.kris = res.data;
                 this._changeDetectorRef.markForCheck();
             });
 
+        // Get the risk areas
         this.thresholds$ = this._thresholdService.thresholds$;
-
         this._thresholdService.thresholds$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((items: Threshold[]) => {
-                this.thresholdsCount = items.length;
-                this.isLoading = false;
+            .subscribe((riskAreas: Threshold[]) => {
+
+                // Update the counts
+                this.thresholdsCount = riskAreas.length;
+
+                // Mark for check
                 this._changeDetectorRef.markForCheck();
+                this.isLoading = false;
             });
     }
 
     createThreshold(): void {
         const dialogRef = this.dialog.open(KriThresholdDialogComponent, {});
-        dialogRef.afterClosed().subscribe((result) => {
+
+        dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                this._thresholdService.createThreshold(result).subscribe(
-                    (threshold) => {
-                        if (threshold instanceof HttpErrorResponse) {
-                            this.alert.type = 'error';
-                            this.alert.message = threshold.error.message;
-                            this.showAlert = true;
-                            setTimeout(() => {
-                                this.showAlert = false;
-                            }, 2000);
+                this._thresholdService.createThreshold(result)
+                    .subscribe(
+                        (threshold) => {
+                            if (threshold instanceof HttpErrorResponse) {
+                                this.alert.type = 'error';
+                                this.alert.message = threshold.error.message;
+                                this.showAlert = true;
+
+                                setTimeout(() => {
+                                    // this.alert = null;
+                                    this.showAlert = false;
+                                }, 2000);
+                            }
+
+                            // Mark for check
+                            this._changeDetectorRef.markForCheck();
+                        },
+                        (error) => {
+                            // console.log(error);
                         }
-                        this._changeDetectorRef.markForCheck();
-                    },
-                    () => {}
-                );
+                    );
             }
         });
     }
 
     toggleDetails(id: string): void {
         if (this.selectedThreshold && this.selectedThreshold.id === id) {
+            // Close the details
             this.closeDetails();
             return;
         }
 
-        this._thresholdService.getThresholdById(id).subscribe((threshold) => {
-            this.selectedThreshold = threshold;
-            this.selectedThresholdForm.patchValue(threshold);
-            this._changeDetectorRef.markForCheck();
-        });
+        // Get the product by id
+        this._thresholdService.getThresholdById(id)
+            .subscribe((threshold) => {
+                // Set the selected product
+                console.log(threshold);
+                this.selectedThreshold = threshold;
+                // Fill the form
+                this.selectedThresholdForm.patchValue(threshold);
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
     }
 
+    /**
+     * Close the details
+     */
     closeDetails(): void {
         this.selectedThreshold = null;
     }
 
-    ngAfterViewInit(): void {
-        this._sort.sortChange.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
-            this._paginator.pageIndex = 0;
-            this.closeDetails();
-        });
 
-        merge(this._sort.sortChange, this._paginator.page)
-            .pipe(
-                switchMap(() => {
-                    this.closeDetails();
-                    this.isLoading = true;
-                    this.query.size = this._paginator.pageSize;
-                    this.query.page = this._paginator.pageIndex;
-                    this.query.sort = this._sort.active as any;
-                    this.query.order = this._sort.direction;
-                    return this._thresholdService.getThresholds(this.query);
-                }),
-                map(() => {
-                    this.isLoading = false;
-                }),
-                takeUntil(this._unsubscribeAll)
-            )
-            .subscribe();
+    /**
+     * After view init
+     */
+    ngAfterViewInit(): void {
+        // If the user changes the sort order...
+        this._sort.sortChange
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(() => {
+                // Reset back to the first page
+                this._paginator.pageIndex = 0;
+
+                // Close the details
+                this.closeDetails();
+            });
+
+        // Get products if sort or page changes
+        merge(this._sort.sortChange, this._paginator.page).pipe(
+            switchMap(() => {
+                this.closeDetails();
+                this.isLoading = true;
+                this.query.size = this._paginator.pageSize;
+                this.query.page = this._paginator.pageIndex;
+                this.query.sort = this._sort.active;
+                this.query.order = this._sort.direction;
+                return this._thresholdService.getThresholds(this.query);
+            }),
+            map(() => {
+                this.isLoading = false;
+            })
+        ).subscribe();
     }
 
+    /**
+     * On destroy
+     */
     ngOnDestroy(): void {
+        // Unsubscribe from all subscriptions
         this._unsubscribeAll.next(0);
         this._unsubscribeAll.complete();
-        this._unsubscribeKriAll.next(0);
-        this._unsubscribeKriAll.complete();
     }
 
+    /**
+     * Track by function for ngFor loops
+     *
+     * @param index
+     * @param item
+     */
     trackByFn(index: number, item: any): any {
         return item.id || index;
     }
 
     getDate(month: string, year: string): Date {
-        return new Date(`${month}/4/${year}`);
+        const date = new Date(`${month}/4/${year}`);
+        return date;
     }
 
+    /**
+     * Show flash message
+     */
     showFlashMessage(type: 'success' | 'error'): void {
+        // Show the message
         this.flashMessage = type;
+
+        // Mark for check
         this._changeDetectorRef.markForCheck();
+
+        // Hide it after 3 seconds
         setTimeout(() => {
+
             this.flashMessage = null;
+
+            // Mark for check
             this._changeDetectorRef.markForCheck();
         }, 3000);
     }
 
+    /**
+     * Update the selected product using the form mock-api
+     */
     updateSelectedThreshold(): void {
         this.isPerforming = true;
+        // Get the product object
         const threshold = this.selectedThresholdForm.getRawValue();
-        this._thresholdService.updateThreshold(threshold.id, threshold).subscribe(
-            () => {
-                this.isPerforming = false;
-                this.showFlashMessage('success');
-            },
-            (error: HttpErrorResponse) => {
-                this.isPerforming = false;
-                this.showFlashMessage('error');
-                console.log(error.error);
-            }
-        );
+
+        // Update the product on the server
+        this._thresholdService.updateThreshold(threshold.id, threshold)
+            .subscribe(() => {
+                    this.isPerforming = false;
+                    // Show a success message
+                    this.showFlashMessage('success');
+                },
+                ((error: HttpErrorResponse) => {
+                    this.isPerforming = false;
+                    this.showFlashMessage('error');
+                    console.log(error.error);
+                })
+            );
     }
 
     reset(): void {
@@ -259,7 +314,7 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
             month: undefined,
             riskAreaId: undefined,
             kriId: undefined,
-            id: ''
+            id: '',
         };
     }
 
@@ -268,7 +323,7 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
             .pipe(
                 takeUntil(this._unsubscribeAll),
                 debounceTime(300),
-                switchMap(() => {
+                switchMap((query) => {
                     this.closeDetails();
                     this.isLoading = true;
                     this.filterEnabled = true;
@@ -284,7 +339,7 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
             .pipe(
                 takeUntil(this._unsubscribeAll),
                 debounceTime(300),
-                switchMap(() => {
+                switchMap((query) => {
                     this.closeDetails();
                     this.isLoading = true;
                     this.reset();
@@ -296,4 +351,5 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
             )
             .subscribe();
     }
+
 }

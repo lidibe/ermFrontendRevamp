@@ -148,70 +148,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
         
       },
     ],
-  },
-    {
-        id      : 'erm',
-        title   : 'Board of Directors',
-        type    : 'group',
-        children: [
-            {
-                id      : 'bosedr.committees',
-                title   : 'Directors',
-                type    : 'basic',
-                icon    : 'heroicons_solid:users',
-                link : '/bosedr/directors'
-            },
-            {
-                id      : 'bosedr.committees',
-                title   : 'Committees',
-                type    : 'basic',
-                icon    : 'heroicons_solid:briefcase',
-                link : '/bosedr/committees'
-            },
-            {
-                id      : 'bosedr.meetings',
-                title   : 'Meetings',
-                type    : 'basic',
-                icon    : 'heroicons_solid:calendar',
-                link : '/bosedr/meetings'
-            },
-            {
-                id      : 'bosedr.organizations',
-                title   : 'Organizations',
-                type    : 'basic',
-                icon    : 'heroicons_outline:building-library',
-                link : '/bosedr/organizations'
-            },
-/*             {
-                id   : 'dashboards.project',
-                title: 'Project',
-                type : 'basic',
-                icon : 'heroicons_outline:clipboard-document-check',
-                link : '/dashboards/project',
-            },
-            {
-                id   : 'dashboards.analytics',
-                title: 'Analytics',
-                type : 'basic',
-                icon : 'heroicons_outline:chart-pie',
-                link : '/dashboards/analytics',
-            },
-            {
-                id   : 'dashboards.finance',
-                title: 'Finance',
-                type : 'basic',
-                icon : 'heroicons_outline:banknotes',
-                link : '/dashboards/finance',
-            },
-            {
-                id   : 'dashboards.crypto',
-                title: 'Crypto',
-                type : 'basic',
-                icon : 'heroicons_outline:currency-dollar',
-                link : '/dashboards/crypto',
-            }, */
-        ]
-    }
+    },
 /*     {
         id      : 'apps',
         title   : 'Applications',

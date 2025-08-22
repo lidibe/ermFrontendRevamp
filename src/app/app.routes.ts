@@ -176,28 +176,14 @@ export const appRoutes: Route[] = [
                 (m) => m.RiskDataModule
               ),
           },
-          {
-            path: 'user-groups',
-            children: [
-              {
-                path: '',
-                loadChildren: () =>
-                  import(
-                    'app/modules/admin/user-groups/user-groups.module'
-                  ).then((m) => m.UserGroupsModule),
-              },
-            ],
-          },
-        ],
-      },
-
-            // Bosedr routes
-            {path: 'bosedr', children: [
-                {path: 'committees', loadChildren: () => import('app/modules/committees/committees.routes')},
-                {path: 'directors', loadChildren: () => import('app/modules/directors/directors.routes')},
-                {path: 'meetings', loadChildren: () => import('app/modules/meetings/meetings.routes')},
-                {path: 'organizations', loadChildren: () => import('app/modules/organizations/organizations.routes')},
-            ]},
+            {
+              path: 'user-groups',
+              loadChildren: () =>
+                import('app/modules/admin/user-groups/user-groups.module')
+                  .then(m => m.UserGroupsModule),
+            },
+                  ],
+                },
 
             // Dashboards
             {path: 'dashboards', children: [

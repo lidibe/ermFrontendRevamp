@@ -3,15 +3,12 @@ import { ListComponent } from './list/list.component';
 import { UserGroupsComponent } from './user-groups.component';
 
 export const userGroupsRoutes: Route[] = [
-    {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'management',
-        component: UserGroupsComponent,
-    },
-
-    {
-        path: 'management',
-        component: ListComponent
-    }
+  {
+    path: '',
+    component: UserGroupsComponent,   // shell / layout that contains <router-outlet>
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'management' }, // redirect ONLY
+      { path: 'management', component: ListComponent },          // component ONLY
+    ],
+  },
 ];

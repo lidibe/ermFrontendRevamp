@@ -14,5 +14,5 @@
             [colors]="chartOptions.colors"
             [fill]="chartOptions.fill"
             [grid]="chartOptions.grid"
-            *ngIf='!isLoading'></apx-chart>
+            *ngIf='chartOptions?.chart?.type && !isLoading'></apx-chart>
 </div>

@@ -58,6 +58,7 @@ export class SimpleMixedChartComponent implements OnInit, OnChanges {
     }
 
     displayGraph(): void {
+        if (this.details) {
         this.chartOptions = {
             series: [
                 {
@@ -123,5 +124,6 @@ export class SimpleMixedChartComponent implements OnInit, OnChanges {
                 }
             ]
         };
+    }
     }
 }

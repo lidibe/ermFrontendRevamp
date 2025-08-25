@@ -1,6 +1,7 @@
 <div id="chart">
     <facebook-content-loader *ngIf='isLoading'></facebook-content-loader>
     <apx-chart
+            ngIf="chartOptions?.chart?.type"
             [series]="chartOptions.series"
             [chart]="chartOptions.chart"
             [xaxis]="chartOptions.xaxis"

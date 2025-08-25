@@ -42,6 +42,7 @@ export class DataBarChartComponent implements OnInit, OnChanges {
   }
 
   fillGraph(data: number[], labels: string[]): void {
+    if (this.details) {
     this.chartOptions = {
       series: [
         {
@@ -106,6 +107,7 @@ export class DataBarChartComponent implements OnInit, OnChanges {
         categories: labels
       }
     };
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {

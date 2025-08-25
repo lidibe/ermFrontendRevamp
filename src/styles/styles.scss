@@ -40,4 +40,160 @@ button.mat-primary {
     width: 24px;
     height: 17px;
     vertical-align: middle;
-  } 
+  }
+  
+// Risk Card global styles
+/* You can add global styles to this file, and also import other style files */
+
+$lighter-bad: #ffe8dc;
+$bad: #ffc8a9;
+$darker-bad: #ff5f04;
+
+$lighter-good: #e9f2e8;
+$good: #c9dfc8;
+$darker-good: #61a360;
+
+$lighter-neutral: #fff8db;
+$neutral: #ffeea7;
+$darker-neutral: #ffcd00;
+
+.aspect-square {
+  aspect-ratio: 1/1 !important;
+}
+
+@mixin text($color) {
+  color: $color;
+}
+@mixin bg($color) {
+  background-color: $color;
+}
+@mixin fill($color) {
+  fill: $color;
+}
+@mixin border($color) {
+  border-color: $color;
+}
+@mixin stroke($color) {
+  stroke: $color;
+}
+
+@mixin magic-border($width, $color, $duration) {
+  position: relative;
+  &:before {
+    content: "";
+    position: absolute;
+    width: calc(100% + #{$width * 2});
+    height: calc(100% + #{$width * 2});
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        transparent 50%,
+        $color 50%,
+        $color 100%
+      ),
+      linear-gradient(to top, transparent 50%, transparent 50%),
+      linear-gradient(to top, $color 50%, transparent 50%),
+      linear-gradient(to right, $color 0%, $color 100%),
+      radial-gradient(
+        circle $width * 3,
+        $color $width * 2,
+        transparent $width * 2
+      );
+    // background-size: 0% $width, $width 0%, $width 0%, 0% $width, 0% $width * 4;
+    background-size: 100% $width, $width 100%, $width 200%, 98% $width,
+      $width * 4 $width * 4;
+
+    background-position: 50% 100%, 0% 100%, 100% 98%, 100% 2%, 0% 0.7%;
+    background-repeat: no-repeat;
+    // animation: magic-border-animation $duration forwards;
+    transform: scale(1) rotate(180deg);
+  }
+}
+
+//Card border styles
+.bad-card-border {
+  @include magic-border(0.25rem, $darker-bad, 1.5s);
+}
+
+.neutral-card-border {
+  @include magic-border(0.25rem, $darker-neutral, 1.5s);
+}
+
+.good-card-border {
+  @include magic-border(0.25rem, $darker-good, 1.5s);
+}
+
+//text styles
+.bad-text {
+  @include text($darker-bad);
+}
+.neutral-text {
+  @include text($darker-neutral);
+}
+.good-text {
+  @include text($darker-good);
+}
+
+//bg styles
+.bad-darker-bg {
+  @include bg($darker-bad);
+}
+.neutral-darker-bg {
+  @include bg($darker-neutral);
+}
+.good-darker-bg {
+  @include bg($darker-good);
+}
+.bad-lighter-bg {
+  @include bg($lighter-bad);
+}
+.neutral-lighter-bg {
+  @include bg($lighter-neutral);
+}
+.good-lighter-bg {
+  @include bg($lighter-good);
+}
+
+//fill styles
+.neutral-fill {
+  @include fill($neutral);
+}
+.good-fill {
+  @include fill($good);
+}
+.bad-fill {
+  @include fill($bad);
+}
+.neutral-darker-fill {
+  @include fill($darker-neutral);
+}
+.good-darker-fill {
+  @include fill($darker-good);
+}
+.bad-darker-fill {
+  @include fill($darker-bad);
+}
+.fill-none {
+  fill: none;
+}
+//border styles
+.bad-border {
+  @include border($darker-bad);
+}
+.neutral-border {
+  @include border($darker-neutral);
+}
+.good-border {
+  @include border($darker-good);
+}
+
+//stroke styles
+.bad-stroke {
+  @include stroke($darker-bad);
+}
+.neutral-stroke {
+  @include stroke($darker-neutral);
+}
+.good-stroke {
+  @include stroke($darker-good);
+}

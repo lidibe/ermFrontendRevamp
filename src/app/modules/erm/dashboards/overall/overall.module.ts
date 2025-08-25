@@ -8,7 +8,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {OverallComponent} from './overall.component';
 import {MatMenuModule} from '@angular/material/menu';
-//import {FusionChartsModule} from 'angular-fusioncharts';
+import {FusionChartsModule} from 'angular-fusioncharts';
 import { FuseAlertComponent } from '@fuse/components/alert';
 
 export const routes: Route[] = [
@@ -28,7 +28,7 @@ export const routes: Route[] = [
         MatIconModule,
         MatSidenavModule,
         MatMenuModule,
-        //FusionChartsModule,
+        FusionChartsModule,
         FuseAlertComponent
     ]
 })

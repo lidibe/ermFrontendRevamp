@@ -8,9 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { SummaryComponent } from './summary.component';
 import { MatMenuModule } from '@angular/material/menu';
-//import { FusionChartsModule } from 'angular-fusioncharts';
+import { FusionChartsModule } from 'angular-fusioncharts';
 import { FuseAlertComponent } from '@fuse/components/alert';
-
 
 export const routes: Route[] = [{ path: '', component: SummaryComponent }];
 
@@ -25,7 +24,7 @@ export const routes: Route[] = [{ path: '', component: SummaryComponent }];
     MatIconModule,
     MatSidenavModule,
     MatMenuModule,
-    //FusionChartsModule,
+    FusionChartsModule,
     FuseAlertComponent,
   ],
 })

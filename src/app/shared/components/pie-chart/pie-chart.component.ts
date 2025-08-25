@@ -32,7 +32,35 @@ export class PieChartComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    if (this.details) {
+    this.chartOptions = {
+      series: this.details?.data,
+      chart: {
+        width: 450,
+        type: 'pie',
+      },
+      colors: ['#00aa8c', '#ffcd00', '#00736e', '#00a5b9', '#e1004b', '#eb9b00'],
+      labels: this.details?.labels,
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 400
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      ]
+    };
+    this._cdRef.detectChanges();
+    }
+  }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if  (this.details) {
     this.chartOptions = {
       series: this.details?.data,
       chart: {
@@ -57,31 +85,5 @@ export class PieChartComponent implements OnInit, OnChanges {
     };
     this._cdRef.detectChanges();
   }
-
-  ngOnChanges(changes: SimpleChanges): void {
-
-    this.chartOptions = {
-      series: this.details?.data,
-      chart: {
-        width: 450,
-        type: 'pie',
-      },
-      colors: ['#00aa8c', '#ffcd00', '#00736e', '#00a5b9', '#e1004b', '#eb9b00'],
-      labels: this.details?.labels,
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            chart: {
-              width: 400
-            },
-            legend: {
-              position: 'bottom'
-            }
-          }
-        }
-      ]
-    };
-    this._cdRef.detectChanges();
   }
 }

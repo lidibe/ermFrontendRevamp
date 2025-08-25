@@ -28,7 +28,7 @@
                 </mat-form-field>
             </div>
 
-            <button class="ml-4 mb-6" mat-flat-button [color]="'primary'" (click)="createThreshold()">
+            <button class="ml-4 mb-6" mat-flat-button [color]="'primary'" (click)="createRiskType()">
                 <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                 <span class="ml-2 mr-1">Add</span>
             </button>
@@ -148,24 +148,23 @@
                                                     Delete
                                                 </button>
                                                 <div class="flex items-center">
-                                                    <!--div
-                                                            class="flex items-center mr-4"
-                                                            *ngIf="flashMessage">
+                                                    <div class="flex items-center mr-4" *ngIf="flashMessage">
                                                         <ng-container *ngIf="flashMessage === 'success'">
-                                                            <mat-icon
-                                                                    class="text-green-500"
-                                                                    [svgIcon]="'heroicons_outline:check'"></mat-icon>
-                                                            <span class="ml-2">Product updated</span>
+                                                            <mat-icon class="text-green-500"
+                                                                [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                                            <span class="ml-2">Risk Type updated</span>
                                                         </ng-container>
                                                         <ng-container *ngIf="flashMessage === 'error'">
-                                                            <mat-icon
-                                                                    class="text-red-500"
-                                                                    [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
+                                                            <mat-icon class="text-red-500"
+                                                                [svgIcon]="'heroicons_outline:x'"></mat-icon>
                                                             <span class="ml-2">An error occurred, try again!</span>
                                                         </ng-container>
-                                                    </div-->
-                                                    <button mat-flat-button [color]="'primary'">
+                                                    </div>
+                                                    <button mat-flat-button [color]="'primary'"
+                                                        (click)="updateSelectedRiskType()" [disabled]="isPerforming">
                                                         Update
+                                                        <img src="/assets/images/loading.gif" style="width: 2em;"
+                                                            *ngIf="isPerforming" />
                                                     </button>
                                                 </div>
                                             </div>

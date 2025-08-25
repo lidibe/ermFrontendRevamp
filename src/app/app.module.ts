@@ -41,6 +41,7 @@ import {
   CurrencyMaskConfig,
   CurrencyMaskModule,
 } from "ng2-currency-mask";
+import { KriRiskTypesDialogComponent } from './shared/dialogs/kri-risk-types/kri-risk-types.dialog.component';
 
 FusionCharts.options["license"]({
   key: "CyA8qlbE4D2A22A3A2D3B1D2D2C4E2H1A8apzA2E5D-8H-8woxB4B1sevE4H1B9D4C3D2D2C4B1E1H4B1C3A3B1B3axxH2B7B2xD2C2E1mlF-7C11C2C7egvD4F3H3eD-16C-13F4E2D3F1G1I4B2C8E3E2B2rttB1B11GD1xG-10sG4A19A32bqD8ZB5G4ooxA9C5A5E7E6C5G4B1B3A9C3A6B4D2f==",
@@ -66,6 +67,7 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     KriThresholdDialogComponent,
     SummaryDataAddDialogComponent,
     PublicKriComponent,
+    KriRiskTypesDialogComponent
   ],
   imports: [
     BrowserModule,

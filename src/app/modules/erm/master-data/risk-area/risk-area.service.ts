@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import {RiskArea, RiskAreaPagination} from '../../models/risk-area.model';
 
 @Injectable({
@@ -126,23 +126,20 @@ export class RiskAreaService
         );
     }
 
-    /**
-     * Create product
-     */
-    createRiskArea(): Observable<RiskArea>
+    createRiskType(data: RiskArea): Observable<RiskArea>
     {
         return this.riskAreas$.pipe(
             take(1),
-            switchMap((riskAreas) => this._httpClient.post<RiskArea>('api/apps/ecommerce/inventory/product', {}).pipe(
-                map((newRiskArea) => {
-
-                    // Update the products with the new product
-                    this._riskAreas.next([newRiskArea, ...riskAreas]);
-
-                    // Return the new product
-                    return newRiskArea;
-                })
-            ))
+            switchMap((riskAreas) => this._httpClient.post<RiskArea>('/ms/api/v1/erm/risk-type', data)
+                .pipe(
+                    map((newRiskArea) => {
+                        this._riskAreas.next([newRiskArea, ...riskAreas]);
+                        return newRiskArea;
+                    })
+                )),
+            catchError(error => {
+                return of(error);
+            })
         );
     }
 
@@ -214,6 +211,31 @@ export class RiskAreaService
                     // Return the deleted status
                     return isDeleted;
                 })
+            ))
+        );
+    }
+
+    updateRiskType(id: string, threshold: RiskArea): Observable<RiskArea>
+    {
+        return this.riskAreas$.pipe(
+            take(1),
+            switchMap(riskAreas => this._httpClient.patch<RiskArea>(`/ms/api/v1/erm/risk-type/${id}`,
+                threshold
+            ).pipe(
+                map((updatedRiskArea) => {
+                    const index = riskAreas.findIndex(item => item.id === id);
+                    riskAreas[index] = updatedRiskArea;
+                    this._riskAreas.next(riskAreas);
+                    return updatedRiskArea;
+                }),
+                switchMap(updatedRiskArea => this.riskArea$.pipe(
+                    take(1),
+                    filter(item => item && item.id === id),
+                    tap(() => {
+                        this._riskArea.next(updatedRiskArea);
+                        return updatedRiskArea;
+                    })
+                ))
             ))
         );
     }

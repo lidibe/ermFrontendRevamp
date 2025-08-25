@@ -15,6 +15,10 @@ import {ErmService} from '../../../../../shared/services/erm.service';
 import {RiskAreaService} from '../risk-area.service';
 import {takeUntil} from 'rxjs/operators';
 import { fuseAnimations } from '@fuse/animations';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { FuseAlertType } from '@fuse/components/alert';
+import { KriRiskTypesDialogComponent } from 'app/shared/dialogs/kri-risk-types/kri-risk-types.dialog.component';
 
 @Component({
   selector: 'app-risk-area-list',
@@ -38,11 +42,19 @@ export class RiskAreaListComponent implements OnInit {
   riskAreasCount: number = 0;
   searchInputControl: FormControl = new FormControl();
   private _unsubscribeAll: Subject<any> = new Subject<any>();
+  isPerforming = false;
+  flashMessage: 'success' | 'error' | null = null;
+  showAlert: boolean = false;
+  alert: { type: FuseAlertType; message: string } = {
+        type: 'success',
+        message: ''
+    };
 
   constructor(
       private _changeDetectorRef: ChangeDetectorRef,
       private _fb: FormBuilder,
       private _riskAreaService: RiskAreaService,
+      private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -113,6 +125,53 @@ export class RiskAreaListComponent implements OnInit {
           this._changeDetectorRef.markForCheck();
         });
   }
+
+  updateSelectedRiskType(): void {
+          this.isPerforming = true;
+          const riskType = this.selectedRiskAreaForm.getRawValue();
+          this._riskAreaService.updateRiskType(riskType.id, riskType)
+              .subscribe(() => {
+                      this.isPerforming = false;
+                      this.showFlashMessage('success');
+                  },
+                  ((error: HttpErrorResponse) => {
+                      this.isPerforming = false;
+                      this.showFlashMessage('error');
+                      console.log(error.error);
+                  })
+              );
+    }
+
+    createRiskType(): void {
+        const dialogRef = this.dialog.open(KriRiskTypesDialogComponent, {});
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this._riskAreaService.createRiskType(result)
+                        .subscribe(
+                            (riskArea) => {
+                                if (riskArea instanceof HttpErrorResponse) {
+                                    this.alert.type = 'error';
+                                    this.alert.message = riskArea.error.message;
+                                    this.showAlert = true;
+                                    setTimeout(() => {
+                                        this.showAlert = false;
+                                    }, 2000);
+                                }
+                                this._changeDetectorRef.markForCheck();
+                            },
+                        );
+                }
+            });
+        }
+
+   showFlashMessage(type: 'success' | 'error'): void {
+        this.flashMessage = type;
+        this._changeDetectorRef.markForCheck();
+        setTimeout(() => {
+            this.flashMessage = null;
+            this._changeDetectorRef.markForCheck();
+        }, 3000);
+    }
 
   /**
    * Close the details

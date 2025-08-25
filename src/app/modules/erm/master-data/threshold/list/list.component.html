@@ -109,7 +109,7 @@
                                 KRI Number
                             </th>
                             <td class="pr-4 truncate" mat-cell *matCellDef="let item">
-                                {{item.key}}
+                                {{item?.kri?.key}}
                             </td>
                         </ng-container>
 
@@ -119,7 +119,7 @@
                                 Name
                             </th>
                             <td class="pr-4" mat-cell *matCellDef="let item">
-                                {{item.name}}
+                                {{item?.kri?.name}}
                             </td>
                         </ng-container>
 
@@ -161,7 +161,7 @@
                                 Limit
                             </th>
                             <td class="pr-4 truncate" mat-cell *matCellDef="let item">
-                                {{item.rlimit}}
+                                {{item.rLimit}}
                             </td>
                         </ng-container>
 
@@ -239,7 +239,7 @@
 
                                                     <mat-form-field class="pr-6 w-1/6">
                                                         <mat-label>Limit</mat-label>
-                                                        <input type="number" matInput [formControlName]="'rlimit'"
+                                                        <input type="number" matInput [formControlName]="'rLimit'"
                                                             required>
                                                     </mat-form-field>
 

@@ -103,7 +103,7 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
             year: {disabled: true, value: ''},
             bau: ['', [Validators.required]],
             trigger: ['', [Validators.required]],
-            rlimit: ['', [Validators.required]],
+            rLimit: ['', [Validators.required]],
             trigger_max: ['', []],
             trigger_min: ['', []],
             // trigger_min_dir: ['', []],
@@ -185,11 +185,15 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
 
         // Get the product by id
         this._thresholdService.getThresholdById(id)
-            .subscribe((threshold) => {
+            .subscribe((threshold: any) => {
                 // Set the selected product
                 console.log(threshold);
                 this.selectedThreshold = threshold;
                 // Fill the form
+                    this.selectedThresholdForm.patchValue({
+                    ...threshold,
+                    name: threshold?.kri?.name ?? '',
+                });
                 this.selectedThresholdForm.patchValue(threshold);
                 // Mark for check
                 this._changeDetectorRef.markForCheck();

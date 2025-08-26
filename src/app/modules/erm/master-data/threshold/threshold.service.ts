@@ -165,7 +165,7 @@ export class ThresholdService
     {
         return this.thresholds$.pipe(
             take(1),
-            switchMap(thresholds => this._httpClient.patch<Threshold>(`/ms/api/v1/erm/threshold/${id}/update`,
+            switchMap(thresholds => this._httpClient.patch<Threshold>(`/ms/api/v1/erm/threshold/${id}`,
                 threshold
             ).pipe(
                 map((updatedThreshold) => {

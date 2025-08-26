@@ -21,7 +21,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 
 import { fuseAnimations } from '@fuse/animations';
-import { FuseAlertType } from '@fuse/components/alert';
 
 import { ErmService } from '../../../../../shared/services/erm.service';
 import { RiskAreaData, RiskAreaDataPagination } from '../../../models/risk-area-data.model';
@@ -43,11 +42,6 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
 
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
-
-    alert: { type: FuseAlertType, message: string } = {
-        type: 'success',
-        message: ''
-    };
 
     isPerforming = false;
     showAlert = false;
@@ -173,7 +167,8 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
     }
 
     getDate(month: string, year: string): Date {
-        return new Date(`${month}/8/${year}`);
+        if (month && year) {
+        return new Date(`${month}/8/${year}`);}
     }
 
     closeDetails(): void {
@@ -268,8 +263,6 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
                     .subscribe(
                         (kriData) => {
                             if (kriData instanceof HttpErrorResponse) {
-                                this.alert.type = 'error';
-                                this.alert.message = kriData.error.message;
                                 this.showAlert = true;
                                 setTimeout(() => {
                                     this.showAlert = false;

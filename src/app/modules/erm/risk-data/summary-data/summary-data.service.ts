@@ -156,13 +156,12 @@ export class SummaryDataService {
    * @param kri
    */
   updateSummaryData(id: string, obj: SummaryData): Observable<SummaryData> {
+    console.log('obj', obj);
     return this.summaryDatas$.pipe(
       take(1),
       switchMap((summaryDatas) =>
         this._httpClient
-          .patch<SummaryData>(`/ms/api/v1/erm/summary-data/${id}`, {
-            obj,
-          })
+          .patch<SummaryData>(`/ms/api/v1/erm/summary-data/${id}`, obj)
           .pipe(
             map((updatedSummaryData) => {
               // Find the index of the updated kri

@@ -10,7 +10,6 @@ import {KriService} from '../kri.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog} from '@angular/material/dialog';
 import {KriAddDialogComponent} from '../../../../../shared/dialogs/kri-add/kri-add.dialog.component';
-import { FuseAlertType } from '@fuse/components/alert';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 
 @Component({
@@ -23,10 +22,6 @@ import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 export class KriListComponent implements OnInit, OnDestroy
 {
     @ViewChild('matDrawer', {static: true}) matDrawer: MatDrawer;
-    alert: { type: FuseAlertType, message: string } = {
-        type: 'success',
-        message: ''
-    };
     query = {
         sort: 'created_at',
         order: 'asc',
@@ -257,8 +252,6 @@ export class KriListComponent implements OnInit, OnDestroy
                     .subscribe(
                         (kri) => {
                             if (kri instanceof HttpErrorResponse) {
-                                this.alert.type = 'error';
-                                this.alert.message = kri.error.message;
                                 this.showAlert = true;
 
                                 setTimeout(() => {

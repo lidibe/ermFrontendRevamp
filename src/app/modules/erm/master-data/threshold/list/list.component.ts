@@ -21,7 +21,6 @@ import {KriThresholdDialogComponent} from '../../../../../shared/dialogs/kri-thr
 import {KriService} from '../../kri/kri.service';
 import {Kri} from '../../kri/kri.types';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseAlertType } from '@fuse/components/alert';
 
 @Component({
     selector: 'app-master-data-threshold-list',
@@ -36,10 +35,6 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
 
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
-    alert: { type: FuseAlertType; message: string } = {
-        type: 'success',
-        message: ''
-    };
     isPerforming = false;
     showAlert: boolean = false;
     flashMessage: 'success' | 'error' | null = null;
@@ -155,8 +150,6 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
                     .subscribe(
                         (threshold) => {
                             if (threshold instanceof HttpErrorResponse) {
-                                this.alert.type = 'error';
-                                this.alert.message = threshold.error.message;
                                 this.showAlert = true;
 
                                 setTimeout(() => {

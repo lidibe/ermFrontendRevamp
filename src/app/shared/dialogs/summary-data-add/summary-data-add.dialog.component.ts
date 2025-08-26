@@ -1,12 +1,18 @@
-import {ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    Inject,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {Observable, Subject} from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {SummaryData} from '../../../modules/erm/risk-data/summary-data/summary-data.types';
-import {SummaryDataService} from '../../../modules/erm/risk-data/summary-data/summary-data.service';
-import {RiskAreaService} from '../../../modules/erm/master-data/risk-area/risk-area.service';
+import { SummaryData } from '../../../modules/erm/risk-data/summary-data/summary-data.types';
+import { SummaryDataService } from '../../../modules/erm/risk-data/summary-data/summary-data.service';
+import { RiskAreaService } from '../../../modules/erm/master-data/risk-area/risk-area.service';
 
 @Component({
     selector: 'app-summary-data-add.dialog',
@@ -14,7 +20,6 @@ import {RiskAreaService} from '../../../modules/erm/master-data/risk-area/risk-a
     styleUrls: ['./summary-data-add.dialog.css'],
 })
 export class SummaryDataAddDialogComponent implements OnInit {
-
     countryAutoSuggestions: Observable<any[]>;
     kris: SummaryData[];
     form: FormGroup;
@@ -42,21 +47,22 @@ export class SummaryDataAddDialogComponent implements OnInit {
     quillModules: any = {
         toolbar: [
             ['bold', 'italic', 'underline'],
-            [{align: []}, {list: 'ordered'}, {list: 'bullet'}],
-            ['clean']
-        ]
+            [{ align: [] }, { list: 'ordered' }, { list: 'bullet' }],
+            ['clean'],
+        ],
     };
-    @ViewChild('input', {static: true}) input: ElementRef;
+    @ViewChild('input', { static: true }) input: ElementRef;
     riskAreas: any;
 
-    constructor(public dialogRef: MatDialogRef<SummaryDataAddDialogComponent>,
-                @Inject(MAT_DIALOG_DATA) public data: SummaryData,
-                private router: Router,
-                private fb: FormBuilder,
-                private _summaryDataService: SummaryDataService,
-                private _riskAreaService: RiskAreaService,
-                private _changeDetectorRef: ChangeDetectorRef,
-                public toastr: ToastrService) {
+    constructor(
+        public dialogRef: MatDialogRef<SummaryDataAddDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: SummaryData,
+        private fb: FormBuilder,
+        private _summaryDataService: SummaryDataService,
+        private _riskAreaService: RiskAreaService,
+        private _changeDetectorRef: ChangeDetectorRef,
+        public toastr: ToastrService
+    ) {
         this.current = {} as SummaryData;
         this.form = this.fb.group({
             month: ['', []],
@@ -75,7 +81,6 @@ export class SummaryDataAddDialogComponent implements OnInit {
             this.kris = res.data;
             this._changeDetectorRef.detectChanges();
         });
-
     }
     getRiskAreas(): void {
         this._riskAreaService.getRiskAreas().subscribe((res: any) => {

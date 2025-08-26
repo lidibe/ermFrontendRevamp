@@ -20,7 +20,6 @@ import { SummaryData, RiskArea } from '../summary-data.types';
 import { SummaryDataService } from '../summary-data.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
-import { FuseAlertType } from '@fuse/components/alert';
 import { SummaryDataAddDialogComponent } from '../../../../../shared/dialogs/summary-data-add/summary-data-add.dialog.component';
 
 @Component({
@@ -33,11 +32,6 @@ import { SummaryDataAddDialogComponent } from '../../../../../shared/dialogs/sum
 })
 export class SummaryDataListComponent implements OnInit, OnDestroy {
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
-
-    alert: { type: FuseAlertType; message: string } = {
-        type: 'success',
-        message: ''
-    };
     showAlert = false;
     flashMessage: 'success' | 'error' | null = null;
 
@@ -189,8 +183,6 @@ export class SummaryDataListComponent implements OnInit, OnDestroy {
                 this._summaryDataService.createSummaryData(result).subscribe(
                     (obj) => {
                         if (obj instanceof HttpErrorResponse) {
-                            this.alert.type = 'error';
-                            this.alert.message = obj.error.message;
                             this.showAlert = true;
                             setTimeout(() => {
                                 this.showAlert = false;

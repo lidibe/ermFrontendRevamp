@@ -1,15 +1,19 @@
-import {ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    Inject,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {Observable, Subject} from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {KriData} from '../../../modules/erm/models/kri-data.model';
-import {Kri} from '../../../modules/erm/master-data/kri/kri.types';
-import {KriService} from '../../../modules/erm/master-data/kri/kri.service';
-import {takeUntil} from 'rxjs/operators';
-import {RiskAreaService} from '../../../modules/erm/master-data/risk-area/risk-area.service';
-import {RiskArea} from '../../../modules/erm/models/risk-area.model';
+import { KriData } from '../../../modules/erm/models/kri-data.model';
+import { Kri } from '../../../modules/erm/master-data/kri/kri.types';
+import { RiskAreaService } from '../../../modules/erm/master-data/risk-area/risk-area.service';
+import { RiskArea } from '../../../modules/erm/models/risk-area.model';
 
 @Component({
     selector: 'app-kri-add.dialog',
@@ -17,7 +21,6 @@ import {RiskArea} from '../../../modules/erm/models/risk-area.model';
     styleUrls: ['./kri-add.dialog.css'],
 })
 export class KriAddDialogComponent implements OnInit {
-
     title = 'Add KRI';
     countryAutoSuggestions: Observable<any[]>;
     kris: Kri[];
@@ -30,10 +33,10 @@ export class KriAddDialogComponent implements OnInit {
     selectedKri: Kri;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     statuses = [
-        {label: 'ACTIVE', value: 'ACTIVE'},
-        {label: 'OVERRIDE', value: 'OVERRIDE'},
-        {label: 'POTENTIAL DUPLICATE', value: 'POTENTIAL DUPLICATE'},
-        {label: 'DUPLICATE', value: 'DUPLICATE'},
+        { label: 'ACTIVE', value: 'ACTIVE' },
+        { label: 'OVERRIDE', value: 'OVERRIDE' },
+        { label: 'POTENTIAL DUPLICATE', value: 'POTENTIAL DUPLICATE' },
+        { label: 'DUPLICATE', value: 'DUPLICATE' },
     ];
     years = ['2019', '2020', '2021', '2022', '2023', '2024', '2025'];
     months = [
@@ -53,24 +56,23 @@ export class KriAddDialogComponent implements OnInit {
     quillModules: any = {
         toolbar: [
             ['bold', 'italic', 'underline'],
-            [{align: []}, {list: 'ordered'}, {list: 'bullet'}],
-            ['clean']
-        ]
+            [{ align: [] }, { list: 'ordered' }, { list: 'bullet' }],
+            ['clean'],
+        ],
     };
-    @ViewChild('input', {static: true}) input: ElementRef;
+    @ViewChild('input', { static: true }) input: ElementRef;
 
-    constructor(public dialogRef: MatDialogRef<KriAddDialogComponent>,
-                @Inject(MAT_DIALOG_DATA) public data: KriData,
-                private router: Router,
-                private fb: FormBuilder,
-                private _kriService: KriService,
-                private _riskAreaService: RiskAreaService,
-                private _changeDetectorRef: ChangeDetectorRef,
-                public toastr: ToastrService) {
+    constructor(
+        public dialogRef: MatDialogRef<KriAddDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: KriData,
+        private fb: FormBuilder,
+        private _riskAreaService: RiskAreaService,
+        private _changeDetectorRef: ChangeDetectorRef,
+        public toastr: ToastrService
+    ) {
         this.current = {} as KriData;
         this.form = this.fb.group({
             riskAreaId: [''],
-            key: ['', [Validators.required]],
             name: ['', [Validators.required]],
             description: [''],
             nature: ['', [Validators.required]],
@@ -87,7 +89,6 @@ export class KriAddDialogComponent implements OnInit {
             this.riskAreas = res.data;
             this._changeDetectorRef.detectChanges();
         });
-
     }
     closeDialog(): void {
         this.dialogRef.close();

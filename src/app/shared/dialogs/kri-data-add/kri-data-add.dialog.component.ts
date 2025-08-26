@@ -1,13 +1,18 @@
-import {ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    Inject,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {Observable, Subject} from 'rxjs';
+import { Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {KriData} from '../../../modules/erm/models/kri-data.model';
-import {Kri} from '../../../modules/erm/master-data/kri/kri.types';
-import {KriService} from '../../../modules/erm/master-data/kri/kri.service';
-import {takeUntil} from 'rxjs/operators';
+import { KriData } from '../../../modules/erm/models/kri-data.model';
+import { Kri } from '../../../modules/erm/master-data/kri/kri.types';
+import { KriService } from '../../../modules/erm/master-data/kri/kri.service';
 
 @Component({
     selector: 'app-kri-data-add.dialog',
@@ -15,7 +20,6 @@ import {takeUntil} from 'rxjs/operators';
     styleUrls: ['./kri-data-add.dialog.css'],
 })
 export class KriDataAddDialogComponent implements OnInit {
-
     countryAutoSuggestions: Observable<any[]>;
     kris: Kri[];
     form: FormGroup;
@@ -24,12 +28,11 @@ export class KriDataAddDialogComponent implements OnInit {
     krisCount: number = 0;
     id: string;
     selectedKri: Kri;
-    private _unsubscribeAll: Subject<any> = new Subject<any>();
     statuses = [
-        {label: 'ACTIVE', value: 'ACTIVE'},
-        {label: 'OVERRIDE', value: 'OVERRIDE'},
-        {label: 'POTENTIAL DUPLICATE', value: 'POTENTIAL DUPLICATE'},
-        {label: 'DUPLICATE', value: 'DUPLICATE'},
+        { label: 'ACTIVE', value: 'ACTIVE' },
+        { label: 'OVERRIDE', value: 'OVERRIDE' },
+        { label: 'POTENTIAL DUPLICATE', value: 'POTENTIAL DUPLICATE' },
+        { label: 'DUPLICATE', value: 'DUPLICATE' },
     ];
     years = ['2019', '2020', '2021', '2022', '2023', '2024', '2025'];
     months = [
@@ -49,19 +52,20 @@ export class KriDataAddDialogComponent implements OnInit {
     quillModules: any = {
         toolbar: [
             ['bold', 'italic', 'underline'],
-            [{align: []}, {list: 'ordered'}, {list: 'bullet'}],
-            ['clean']
-        ]
+            [{ align: [] }, { list: 'ordered' }, { list: 'bullet' }],
+            ['clean'],
+        ],
     };
-    @ViewChild('input', {static: true}) input: ElementRef;
+    @ViewChild('input', { static: true }) input: ElementRef;
 
-    constructor(public dialogRef: MatDialogRef<KriDataAddDialogComponent>,
-                @Inject(MAT_DIALOG_DATA) public data: any,
-                private router: Router,
-                private fb: FormBuilder,
-                private _kriService: KriService,
-                private _changeDetectorRef: ChangeDetectorRef,
-                public toastr: ToastrService) {
+    constructor(
+        public dialogRef: MatDialogRef<KriDataAddDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: any,
+        private fb: FormBuilder,
+        private _kriService: KriService,
+        private _changeDetectorRef: ChangeDetectorRef,
+        public toastr: ToastrService
+    ) {
         this.current = {} as KriData;
         this.form = this.fb.group({
             kriId: ['', [Validators.required]],
@@ -73,7 +77,6 @@ export class KriDataAddDialogComponent implements OnInit {
     }
     save(): void {
         const data = this.form.getRawValue();
-        // console.log('data', data);
         this.dialogRef.close(data);
     }
     ngOnInit(): void {

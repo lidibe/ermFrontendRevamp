@@ -17,7 +17,6 @@ import {takeUntil} from 'rxjs/operators';
 import { fuseAnimations } from '@fuse/animations';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
-import { FuseAlertType } from '@fuse/components/alert';
 import { KriRiskTypesDialogComponent } from 'app/shared/dialogs/kri-risk-types/kri-risk-types.dialog.component';
 
 @Component({
@@ -45,10 +44,6 @@ export class RiskAreaListComponent implements OnInit {
   isPerforming = false;
   flashMessage: 'success' | 'error' | null = null;
   showAlert: boolean = false;
-  alert: { type: FuseAlertType; message: string } = {
-        type: 'success',
-        message: ''
-    };
 
   constructor(
       private _changeDetectorRef: ChangeDetectorRef,
@@ -150,8 +145,6 @@ export class RiskAreaListComponent implements OnInit {
                         .subscribe(
                             (riskArea) => {
                                 if (riskArea instanceof HttpErrorResponse) {
-                                    this.alert.type = 'error';
-                                    this.alert.message = riskArea.error.message;
                                     this.showAlert = true;
                                     setTimeout(() => {
                                         this.showAlert = false;

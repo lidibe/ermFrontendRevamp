@@ -141,9 +141,7 @@ export class RiskAreaDataService
     {
         return this.riskAreaDatas$.pipe(
             take(1),
-            switchMap(riskAreaDatas => this._httpClient.patch<RiskAreaData>(`/ms/api/v1/erm/risk-area-data/${id}`, {
-                data: riskAreaData
-            }).pipe(
+            switchMap(riskAreaDatas => this._httpClient.patch<RiskAreaData>(`/ms/api/v1/erm/risk-area-data/${id}`, riskAreaData).pipe(
                 map((updatedRiskAreaData) => {
 
                     // Find the index of the updated risk area

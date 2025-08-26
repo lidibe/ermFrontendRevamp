@@ -37,11 +37,6 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
-
-    alert: { type: 'success' | 'error', message: string } = {
-        type: 'success',
-        message: ''
-    };
     showAlert = false;
     flashMessage: 'success' | 'error' | null = null;
 
@@ -226,8 +221,6 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
                     .subscribe(
                         (kriData) => {
                             if (kriData instanceof HttpErrorResponse) {
-                                this.alert.type = 'error';
-                                this.alert.message = kriData.error.message;
                                 this.showAlert = true;
                                 setTimeout(() => { this.showAlert = false; }, 2000);
                             }

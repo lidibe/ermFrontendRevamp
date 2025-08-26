@@ -1,12 +1,18 @@
-import {ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    Inject,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {Observable} from 'rxjs';
+import { Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {RiskArea} from '../../../modules/erm/models/risk-area.model';
-import {RiskAreaData} from '../../../modules/erm/models/risk-area-data.model';
-import {RiskAreaService} from '../../../modules/erm/master-data/risk-area/risk-area.service';
+import { RiskArea } from '../../../modules/erm/models/risk-area.model';
+import { RiskAreaData } from '../../../modules/erm/models/risk-area-data.model';
+import { RiskAreaService } from '../../../modules/erm/master-data/risk-area/risk-area.service';
 
 @Component({
     selector: 'app-risk-area-data-add.dialog',
@@ -14,17 +20,16 @@ import {RiskAreaService} from '../../../modules/erm/master-data/risk-area/risk-a
     styleUrls: ['./risk-area-data-add.dialog.css'],
 })
 export class RiskAreaDataAddDialogComponent implements OnInit {
-
     countryAutoSuggestions: Observable<any[]>;
     riskAreas: RiskArea[];
     form: FormGroup;
     current: RiskAreaData;
     id: string;
     statuses = [
-        {label: 'ACTIVE', value: 'ACTIVE'},
-        {label: 'OVERRIDE', value: 'OVERRIDE'},
-        {label: 'POTENTIAL DUPLICATE', value: 'POTENTIAL DUPLICATE'},
-        {label: 'DUPLICATE', value: 'DUPLICATE'},
+        { label: 'ACTIVE', value: 'ACTIVE' },
+        { label: 'OVERRIDE', value: 'OVERRIDE' },
+        { label: 'POTENTIAL DUPLICATE', value: 'POTENTIAL DUPLICATE' },
+        { label: 'DUPLICATE', value: 'DUPLICATE' },
     ];
     years = ['2019', '2020', '2021', '2022', '2023', '2024', '2025'];
     months = [
@@ -44,19 +49,20 @@ export class RiskAreaDataAddDialogComponent implements OnInit {
     quillModules: any = {
         toolbar: [
             ['bold', 'italic', 'underline'],
-            [{align: []}, {list: 'ordered'}, {list: 'bullet'}],
-            ['clean']
-        ]
+            [{ align: [] }, { list: 'ordered' }, { list: 'bullet' }],
+            ['clean'],
+        ],
     };
-    @ViewChild('input', {static: true}) input: ElementRef;
+    @ViewChild('input', { static: true }) input: ElementRef;
 
-    constructor(public dialogRef: MatDialogRef<RiskAreaDataAddDialogComponent>,
-                @Inject(MAT_DIALOG_DATA) public data: RiskAreaData,
-                private router: Router,
-                private fb: FormBuilder,
-                private _riskAreaService: RiskAreaService,
-                private _changeDetectorRef: ChangeDetectorRef,
-                public toastr: ToastrService) {
+    constructor(
+        public dialogRef: MatDialogRef<RiskAreaDataAddDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: RiskAreaData,
+        private fb: FormBuilder,
+        private _riskAreaService: RiskAreaService,
+        private _changeDetectorRef: ChangeDetectorRef,
+        public toastr: ToastrService
+    ) {
         this.current = {} as RiskAreaData;
         this.form = this.fb.group({
             riskAreaId: ['', [Validators.required]],
@@ -71,7 +77,6 @@ export class RiskAreaDataAddDialogComponent implements OnInit {
     }
     save(): void {
         const data = this.form.getRawValue();
-        // console.log('data', data);
         this.dialogRef.close(data);
     }
     ngOnInit(): void {
@@ -80,7 +85,6 @@ export class RiskAreaDataAddDialogComponent implements OnInit {
             this.riskAreas = res.data;
             this._changeDetectorRef.detectChanges();
         });
-
     }
     closeDialog(): void {
         this.dialogRef.close();

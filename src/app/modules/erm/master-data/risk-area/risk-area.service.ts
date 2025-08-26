@@ -130,7 +130,7 @@ export class RiskAreaService
     {
         return this.riskAreas$.pipe(
             take(1),
-            switchMap((riskAreas) => this._httpClient.post<RiskArea>('/ms/api/v1/erm/risk-type', data)
+            switchMap((riskAreas) => this._httpClient.post<RiskArea>('/ms/api/v1/erm/risk-area', data)
                 .pipe(
                     map((newRiskArea) => {
                         this._riskAreas.next([newRiskArea, ...riskAreas]);
@@ -219,7 +219,7 @@ export class RiskAreaService
     {
         return this.riskAreas$.pipe(
             take(1),
-            switchMap(riskAreas => this._httpClient.patch<RiskArea>(`/ms/api/v1/erm/risk-type/${id}`,
+            switchMap(riskAreas => this._httpClient.patch<RiskArea>(`/ms/api/v1/erm/risk-area/${id}`,
                 threshold
             ).pipe(
                 map((updatedRiskArea) => {

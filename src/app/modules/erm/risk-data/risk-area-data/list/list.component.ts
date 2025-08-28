@@ -4,10 +4,8 @@ import {
     ChangeDetectorRef,
     Component,
     ElementRef,
-    OnChanges,
     OnDestroy,
     OnInit,
-    SimpleChanges,
     ViewChild,
     ViewEncapsulation
 } from '@angular/core';
@@ -38,7 +36,7 @@ import { KriService } from '../../../master-data/kri/kri.service';
     animations: fuseAnimations,
     providers: [ErmService]
 })
-export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
@@ -54,13 +52,13 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
     selectedRiskAreaData: RiskAreaData | null = null;
     isLoading = true;
     riskAreaDatasCount = 0;
-    riskAreas: RiskArea[];
+    riskAreas: RiskArea[] = [];
     filterEnabled = false;
 
-    private _unsubscribeAll: Subject<any> = new Subject<any>();
-    private _unsubscribeRiskAreaAll: Subject<any> = new Subject<any>();
-    public filterButtonPress: Subject<any> = new Subject<any>();
-    public resetButtonPress: Subject<any> = new Subject<any>();
+    private _unsubscribeAll: Subject<void> = new Subject<void>();
+    private _unsubscribeRiskAreaAll: Subject<void> = new Subject<void>();
+    public filterButtonPress: Subject<void> = new Subject<void>();
+    public resetButtonPress: Subject<void> = new Subject<void>();
 
     quillModules: any = {
         toolbar: [
@@ -74,8 +72,8 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
 
     query = {
         sort: 'created_at',
-        order: 'asc',
-        page: 0,
+        order: 'asc' as 'asc' | 'desc' | '',
+        page: 1,
         year: '2021',
         size: 10,
         month: undefined as string | undefined,
@@ -126,15 +124,16 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
         this._kriService.getRiskArea()
             .pipe(takeUntil(this._unsubscribeRiskAreaAll))
             .subscribe((res: any) => {
-                this.riskAreas = res.data;
+                this.riskAreas = res.data ?? [];
                 this._changeDetectorRef.markForCheck();
             });
 
         this.subscriberToButtonEvents();
-        this.getData();
+        this.bindStreams();
+        this._riskAreaDataService.getRiskAreaDatas(this.query).subscribe();
     }
 
-    getData(): void {
+    private bindStreams(): void {
         this._riskAreaDataService.pagination$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((pagination: RiskAreaDataPagination) => {
@@ -146,7 +145,7 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
         this._riskAreaDataService.riskAreaDatas$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((riskAreaDatas: RiskAreaData[]) => {
-                this.riskAreaDatasCount = riskAreaDatas.length;
+                this.riskAreaDatasCount = riskAreaDatas?.length ?? 0;
                 this.isLoading = false;
                 this._changeDetectorRef.markForCheck();
             });
@@ -166,20 +165,25 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
             });
     }
 
-    getDate(month: string, year: string): Date {
-        if (month && year) {
-        return new Date(`${month}/8/${year}`);}
+    getDate(month: string, year: string): Date | undefined {
+        if (!month || !year) return undefined;
+        const m = Number(month);
+        if (Number.isNaN(m) || m < 1 || m > 12) return undefined;
+        return new Date(year + '-' + String(m).padStart(2, '0') + '-15');
     }
 
     closeDetails(): void {
         this.selectedRiskAreaData = null;
+        this._changeDetectorRef.markForCheck();
     }
 
     ngAfterViewInit(): void {
         this._sort.sortChange
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(() => {
-                this._paginator.pageIndex = 0;
+                if (this._paginator) {
+                    this._paginator.firstPage();
+                }
                 this.closeDetails();
             });
 
@@ -188,26 +192,31 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
                 switchMap(() => {
                     this.closeDetails();
                     this.isLoading = true;
+
                     this.query.size = this._paginator.pageSize;
-                    this.query.page = this._paginator.pageIndex;
+                    this.query.page = this._paginator.pageIndex + 1;
                     this.query.sort = this._sort.active;
-                    this.query.order = this._sort.direction as 'asc' | 'desc' | '';
+                    this.query.order = (this._sort.direction || 'asc') as 'asc' | 'desc' | '';
+
                     return this._riskAreaDataService.getRiskAreaDatas(this.query);
                 }),
                 map(() => {
                     this.isLoading = false;
+                    this._changeDetectorRef.markForCheck();
                 })
             )
             .subscribe();
     }
 
     ngOnDestroy(): void {
-        this._unsubscribeAll.next(0);
+        this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+        this._unsubscribeRiskAreaAll.next();
+        this._unsubscribeRiskAreaAll.complete();
     }
 
     trackByFn(index: number, item: any): any {
-        return item.id || index;
+        return item?.id ?? index;
     }
 
     updateSelectedRiskAreaData(): void {
@@ -238,7 +247,8 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
     }
 
     filter(): void {
-        this.query.page = 0;
+        this.query.page = 1;
+        if (this._paginator) this._paginator.firstPage();
     }
 
     reset(): void {
@@ -246,13 +256,15 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
         this.query = {
             sort: 'created_at',
             order: 'asc',
-            page: 0,
+            page: 1,
             year: '2021',
             size: 10,
             month: undefined,
             riskAreaId: undefined,
             id: ''
         };
+        if (this._paginator) this._paginator.firstPage();
+        this._changeDetectorRef.markForCheck();
     }
 
     createRiskAreaData(): void {
@@ -264,9 +276,7 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
                         (kriData) => {
                             if (kriData instanceof HttpErrorResponse) {
                                 this.showAlert = true;
-                                setTimeout(() => {
-                                    this.showAlert = false;
-                                }, 2000);
+                                setTimeout(() => { this.showAlert = false; }, 2000);
                             }
                             this._changeDetectorRef.markForCheck();
                         },
@@ -274,10 +284,6 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
                     );
             }
         });
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        console.log('changes', changes);
     }
 
     subscriberToButtonEvents(): void {
@@ -289,10 +295,12 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
                     this.closeDetails();
                     this.isLoading = true;
                     this.filterEnabled = true;
+                    this.query.page = this._paginator ? (this._paginator.pageIndex + 1) : 1;
                     return this._riskAreaDataService.getRiskAreaDatas(this.query);
                 }),
                 map(() => {
                     this.isLoading = false;
+                    this._changeDetectorRef.markForCheck();
                 })
             )
             .subscribe();
@@ -309,6 +317,7 @@ export class RiskAreaDataListComponent implements OnInit, AfterViewInit, OnChang
                 }),
                 map(() => {
                     this.isLoading = false;
+                    this._changeDetectorRef.markForCheck();
                 })
             )
             .subscribe();

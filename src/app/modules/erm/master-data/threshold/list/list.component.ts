@@ -7,11 +7,10 @@ import {
     ViewChild,
     ViewEncapsulation
 } from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {merge, Observable, Subject} from 'rxjs';
-import {ErmService} from '../../../../../shared/services/erm.service';
 import {debounceTime, map, switchMap, takeUntil} from 'rxjs/operators';
 import {ThresholdService} from '../threshold.service';
 import {Threshold, ThresholdPagination} from '../../../models/threshold.model';
@@ -29,14 +28,14 @@ import { fuseAnimations } from '@fuse/animations';
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     animations: fuseAnimations,
-    providers: [ErmService]
 })
 export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
+
     isPerforming = false;
-    showAlert: boolean = false;
+    showAlert = false;
     flashMessage: 'success' | 'error' | null = null;
     columns: string[] = ['key', 'name', 'period', 'bau', 'target', 'limit', 'details'];
     selectedThresholdForm: FormGroup;
@@ -44,9 +43,10 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
     thresholds$: Observable<Threshold[]>;
     selectedThreshold: Threshold | null = null;
     isLoading = true;
-    thresholdsCount: number = 0;
+    thresholdsCount = 0;
     kris: Kri[] = [];
-    filterEnabled: boolean;
+    filterEnabled = false;
+
     private _unsubscribeKriAll: Subject<any> = new Subject<any>();
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     filterButtonPress: Subject<any> = new Subject<any>();
@@ -69,13 +69,13 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
 
     query = {
         sort: 'created_at',
-        order: 'asc',
-        page: 0,
-        year: undefined,
+        order: 'asc' as 'asc' | 'desc' | '',
+        page: 1,
+        year: undefined as string | undefined,
         size: 10,
-        month: undefined,
-        riskAreaId: undefined,
-        kriId: undefined,
+        month: undefined as string | undefined,
+        riskAreaId: undefined as string | undefined,
+        kriId: undefined as string | undefined,
         id: '',
     };
 
@@ -85,11 +85,9 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
         private dialog: MatDialog,
         private _kriService: KriService,
         private _thresholdService: ThresholdService,
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
-
         this.selectedThresholdForm = this._fb.group({
             id: ['', [Validators.required]],
             kri_id: ['', [Validators.required]],
@@ -99,23 +97,16 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
             bau: ['', [Validators.required]],
             trigger: ['', [Validators.required]],
             rLimit: ['', [Validators.required]],
-            trigger_max: ['', []],
-            trigger_min: ['', []],
-            // trigger_min_dir: ['', []],
-            // trigger_max_dir: ['', []],
+            trigger_max: [''],
+            trigger_min: [''],
         });
 
         this.subscriberToButtonEvents();
 
-        // Get the pagination
         this._thresholdService.pagination$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((pagination: ThresholdPagination) => {
-
-                // Update the pagination
                 this.pagination = pagination;
-
-                // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
 
@@ -126,16 +117,11 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
                 this._changeDetectorRef.markForCheck();
             });
 
-        // Get the risk areas
         this.thresholds$ = this._thresholdService.thresholds$;
         this._thresholdService.thresholds$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((riskAreas: Threshold[]) => {
-
-                // Update the counts
                 this.thresholdsCount = riskAreas.length;
-
-                // Mark for check
                 this._changeDetectorRef.markForCheck();
                 this.isLoading = false;
             });
@@ -143,7 +129,6 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
 
     createThreshold(): void {
         const dialogRef = this.dialog.open(KriThresholdDialogComponent, {});
-
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 this._thresholdService.createThreshold(result)
@@ -151,19 +136,11 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
                         (threshold) => {
                             if (threshold instanceof HttpErrorResponse) {
                                 this.showAlert = true;
-
-                                setTimeout(() => {
-                                    // this.alert = null;
-                                    this.showAlert = false;
-                                }, 2000);
+                                setTimeout(() => { this.showAlert = false; }, 2000);
                             }
-
-                            // Mark for check
                             this._changeDetectorRef.markForCheck();
                         },
-                        (error) => {
-                            // console.log(error);
-                        }
+                        () => {}
                     );
             }
         });
@@ -171,60 +148,42 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
 
     toggleDetails(id: string): void {
         if (this.selectedThreshold && this.selectedThreshold.id === id) {
-            // Close the details
             this.closeDetails();
             return;
         }
 
-        // Get the product by id
         this._thresholdService.getThresholdById(id)
             .subscribe((threshold: any) => {
-                // Set the selected product
-                console.log(threshold);
                 this.selectedThreshold = threshold;
-                // Fill the form
-                    this.selectedThresholdForm.patchValue({
+                this.selectedThresholdForm.patchValue({
                     ...threshold,
                     name: threshold?.kri?.name ?? '',
                 });
                 this.selectedThresholdForm.patchValue(threshold);
-                // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
     }
 
-    /**
-     * Close the details
-     */
     closeDetails(): void {
         this.selectedThreshold = null;
     }
 
-
-    /**
-     * After view init
-     */
     ngAfterViewInit(): void {
-        // If the user changes the sort order...
         this._sort.sortChange
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(() => {
-                // Reset back to the first page
-                this._paginator.pageIndex = 0;
-
-                // Close the details
+                this._paginator.firstPage();
                 this.closeDetails();
             });
 
-        // Get products if sort or page changes
         merge(this._sort.sortChange, this._paginator.page).pipe(
             switchMap(() => {
                 this.closeDetails();
                 this.isLoading = true;
                 this.query.size = this._paginator.pageSize;
-                this.query.page = this._paginator.pageIndex;
+                this.query.page = this._paginator.pageIndex + 1;
                 this.query.sort = this._sort.active;
-                this.query.order = this._sort.direction;
+                this.query.order = (this._sort.direction || 'asc') as 'asc' | 'desc' | '';
                 return this._thresholdService.getThresholds(this.query);
             }),
             map(() => {
@@ -233,63 +192,36 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
         ).subscribe();
     }
 
-    /**
-     * On destroy
-     */
     ngOnDestroy(): void {
-        // Unsubscribe from all subscriptions
         this._unsubscribeAll.next(0);
         this._unsubscribeAll.complete();
+        this._unsubscribeKriAll.next(0);
+        this._unsubscribeKriAll.complete();
     }
 
-    /**
-     * Track by function for ngFor loops
-     *
-     * @param index
-     * @param item
-     */
     trackByFn(index: number, item: any): any {
         return item.id || index;
     }
 
     getDate(month: string, year: string): Date {
-        const date = new Date(`${month}/4/${year}`);
-        return date;
+        return new Date(`${month}/4/${year}`);
     }
 
-    /**
-     * Show flash message
-     */
     showFlashMessage(type: 'success' | 'error'): void {
-        // Show the message
         this.flashMessage = type;
-
-        // Mark for check
         this._changeDetectorRef.markForCheck();
-
-        // Hide it after 3 seconds
         setTimeout(() => {
-
             this.flashMessage = null;
-
-            // Mark for check
             this._changeDetectorRef.markForCheck();
         }, 3000);
     }
 
-    /**
-     * Update the selected product using the form mock-api
-     */
     updateSelectedThreshold(): void {
         this.isPerforming = true;
-        // Get the product object
         const threshold = this.selectedThresholdForm.getRawValue();
-
-        // Update the product on the server
         this._thresholdService.updateThreshold(threshold.id, threshold)
             .subscribe(() => {
                     this.isPerforming = false;
-                    // Show a success message
                     this.showFlashMessage('success');
                 },
                 ((error: HttpErrorResponse) => {
@@ -305,7 +237,7 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
         this.query = {
             sort: 'created_at',
             order: 'asc',
-            page: 0,
+            page: 1,
             year: '2021',
             size: 10,
             month: undefined,
@@ -313,6 +245,7 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
             kriId: undefined,
             id: '',
         };
+        this._paginator.firstPage();
     }
 
     subscriberToButtonEvents(): void {
@@ -320,10 +253,11 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
             .pipe(
                 takeUntil(this._unsubscribeAll),
                 debounceTime(300),
-                switchMap((query) => {
+                switchMap(() => {
                     this.closeDetails();
                     this.isLoading = true;
                     this.filterEnabled = true;
+                    this.query.page = this._paginator ? (this._paginator.pageIndex + 1) : 1;
                     return this._thresholdService.getThresholds(this.query);
                 }),
                 map(() => {
@@ -336,7 +270,7 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
             .pipe(
                 takeUntil(this._unsubscribeAll),
                 debounceTime(300),
-                switchMap((query) => {
+                switchMap(() => {
                     this.closeDetails();
                     this.isLoading = true;
                     this.reset();
@@ -348,5 +282,4 @@ export class ThresholdListComponent implements OnInit, AfterViewInit, OnDestroy 
             )
             .subscribe();
     }
-
 }

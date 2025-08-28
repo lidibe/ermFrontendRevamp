@@ -13,7 +13,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { merge, Observable, Subject } from 'rxjs';
 import { debounceTime, map, switchMap, takeUntil } from 'rxjs/operators';
-import { ErmService } from '../../../../../shared/services/erm.service';
 import { KriData, KriDataPagination } from '../../../models/kri-data.model';
 import { KriDataService } from '../kri-data.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -31,10 +30,9 @@ import { fuseAnimations } from '@fuse/animations';
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     animations: fuseAnimations,
-    providers: [ErmService]
+    providers: []
 })
 export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
-
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
     showAlert = false;
@@ -50,15 +48,15 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
     kris: Kri[] = [];
     filterEnabled = false;
 
-    private _unsubscribeAll: Subject<any> = new Subject<any>();
-    private _unsubscribeKriAll: Subject<any> = new Subject<any>();
-    filterButtonPress: Subject<any> = new Subject<any>();
-    resetButtonPress: Subject<any> = new Subject<any>();
+    private _unsubscribeAll = new Subject<void>();
+    private _unsubscribeKriAll = new Subject<void>();
+    filterButtonPress = new Subject<void>();
+    resetButtonPress = new Subject<void>();
 
     query = {
         sort: 'created_at',
         order: 'asc',
-        page: 0,
+        page: 1,
         year: '2021',
         size: 10,
         month: undefined as string | undefined,
@@ -89,7 +87,7 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
         private dialog: MatDialog,
         private _kriDataService: KriDataService,
         private _kriService: KriService,
-        private _toartr: ToastrService,
+        private _toastr: ToastrService,
     ) {}
 
     ngOnInit(): void {
@@ -123,26 +121,26 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
             });
 
         this.kriDatas$ = this._kriDataService.kriDatas$;
+
         this._kriDataService.kriDatas$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((kriDatas: KriData[]) => {
-                this.kriDatasCount = kriDatas.length;
+                this.kriDatasCount = kriDatas?.length ?? 0;
                 this._changeDetectorRef.markForCheck();
                 this.isLoading = false;
             });
     }
 
     toggleDetails(id: string): void {
-        if (this.selectedKriData && this.selectedKriData.id === id) {
+        if (this.selectedKriData?.id === id) {
             this.closeDetails();
             return;
         }
-        this._kriDataService.getKriDataById(id)
-            .subscribe((kriData) => {
-                this.selectedKriData = kriData;
-                this.selectedKriDataForm.patchValue(kriData);
-                this._changeDetectorRef.markForCheck();
-            });
+        this._kriDataService.getKriDataById(id).subscribe((kriData) => {
+            this.selectedKriData = kriData;
+            this.selectedKriDataForm.patchValue(kriData);
+            this._changeDetectorRef.markForCheck();
+        });
     }
 
     getDate(month: string, year: string): Date {
@@ -156,37 +154,49 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit(): void {
+        // Reset to first page (index 0) when sort changes
         this._sort.sortChange
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(() => {
-                this._paginator.pageIndex = 0;
+                if (this._paginator) {
+                    this._paginator.firstPage(); // ensures 0-based index
+                }
                 this.closeDetails();
             });
 
-        merge(this._sort.sortChange, this._paginator.page).pipe(
-            switchMap(() => {
-                this.closeDetails();
-                this.isLoading = true;
-                this.query.size = this._paginator.pageSize;
-                this.query.page = this._paginator.pageIndex;
-                this.query.sort = this._sort.active;
-                this.query.order = this._sort.direction;
-                return this._kriDataService.getKriDatas(this.query);
-            }),
-            map(() => {
-                this.isLoading = false;
-                this._changeDetectorRef.markForCheck();
-            })
-        ).subscribe();
+        // Merge sort & page events
+        merge(this._sort.sortChange, this._paginator.page)
+            .pipe(
+                switchMap(() => {
+                    this.closeDetails();
+                    this.isLoading = true;
+
+                    this.query.size = this._paginator.pageSize;
+
+                    this.query.page = this._paginator.pageIndex + 1;
+
+                    this.query.sort = this._sort.active;
+                    this.query.order = this._sort.direction || 'asc';
+
+                    return this._kriDataService.getKriDatas(this.query);
+                }),
+                map(() => {
+                    this.isLoading = false;
+                    this._changeDetectorRef.markForCheck();
+                })
+            )
+            .subscribe();
     }
 
     ngOnDestroy(): void {
-        this._unsubscribeAll.next(0);
+        this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+        this._unsubscribeKriAll.next();
+        this._unsubscribeKriAll.complete();
     }
 
     trackByFn(index: number, item: any): any {
-        return item.id || index;
+        return item?.id ?? index;
     }
 
     updateSelectedKriData(): void {
@@ -237,7 +247,7 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.query = {
             sort: 'created_at',
             order: 'asc',
-            page: 0,
+            page: 1,
             year: '2021',
             size: 10,
             month: undefined,
@@ -245,6 +255,9 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
             kriId: undefined,
             id: '',
         };
+        if (this._paginator) {
+            this._paginator.firstPage();
+        }
         this._changeDetectorRef.markForCheck();
     }
 
@@ -257,6 +270,7 @@ export class KriDataListComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.closeDetails();
                     this.isLoading = true;
                     this.filterEnabled = true;
+                    this.query.page = this._paginator ? (this._paginator.pageIndex + 1) : 1;
                     return this._kriDataService.getKriDatas(this.query);
                 }),
                 map(() => {

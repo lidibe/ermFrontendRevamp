@@ -64,7 +64,7 @@ export class RiskAreaDatasResolver implements Resolve<any>
     query = {
         sort: 'created_at',
         order: 'asc',
-        page: 0,
+        page: 1,
         year: '2021',
         size: 10,
         id: '',

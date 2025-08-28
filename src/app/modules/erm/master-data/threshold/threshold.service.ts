@@ -229,7 +229,7 @@ export class ThresholdService
     public getParams = (query: any) => {
         let params = new HttpParams();
         if (!query.page) {
-            query.page = 0;
+            query.page = 1;
         }
         if (!query.size) {
             query.size = 10;

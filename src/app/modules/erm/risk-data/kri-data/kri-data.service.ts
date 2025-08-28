@@ -268,7 +268,7 @@ export class KriDataService
         let params = new HttpParams();
 
         if (!query.page) {
-            query.page = 0;
+            query.page = 1;
         }
 
         if (!query.size) {

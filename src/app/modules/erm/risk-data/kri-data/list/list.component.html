@@ -38,7 +38,7 @@
         class="ml-4 mt-6"
         mat-flat-button
         [color]="'secondary'"
-        (click)="filterButtonPress.next(0)"
+        (click)="filterButtonPress.next()"
         *ngIf="!filterEnabled"
         type="button">
         <mat-icon [svgIcon]="'heroicons_outline:funnel'"></mat-icon>
@@ -48,7 +48,7 @@
         class="ml-4 mt-6"
         mat-flat-button
         [color]="'warn'"
-        (click)="filterButtonPress.next(0)"
+        (click)="filterButtonPress.next()"
         *ngIf="filterEnabled"
         type="button">
         <mat-icon [svgIcon]="'heroicons_outline:funnel'"></mat-icon>
@@ -58,7 +58,7 @@
         class="ml-4 mt-6"
         mat-flat-button
         [color]="'secondary'"
-        (click)="resetButtonPress.next(0)"
+        (click)="resetButtonPress.next()"
         type="button">
         <mat-icon [svgIcon]="'heroicons_outline:receipt-refund'"></mat-icon>
         <span class="ml-2 mr-1">Reset</span>
@@ -300,7 +300,7 @@
           class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
           [ngClass]="{'pointer-events-none': isLoading}"
           [length]="pagination.length"
-          [pageIndex]="pagination.page"
+          [pageIndex]="pagination.page-1"
           [pageSize]="pagination.size"
           [pageSizeOptions]="[5, 10, 25, 100]"
           [showFirstLastButtons]="true">
